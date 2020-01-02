@@ -3,9 +3,9 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Yuriy Skalko <yuriy.skalko@gmail.com>
  * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  * @author Vyacheslav Strenadko <vyacheslav.strenadko@gmail.com>
- * @author Yuriy Skalko <yuriy.skalko@gmail.com>
  * @author Zhassulan <zyesmukanov@gmail.com>
  * @author Denis Simakov <akinoame1@gmail.com>
  * @author Andrew Pleshakov <beotiger@mail.ru>
@@ -48,6 +48,7 @@ $lang['_advanced']             = 'Тонкая настройка';
 $lang['_network']              = 'Параметры сети';
 $lang['_msg_setting_undefined'] = 'Не найдены метаданные настроек.';
 $lang['_msg_setting_no_class'] = 'Не найден класс настроек.';
+$lang['_msg_setting_no_known_class'] = 'Класс настроек недоступен.';
 $lang['_msg_setting_no_default'] = 'Не задано значение по умолчанию.';
 $lang['title']                 = 'Название (заголовок) вики';
 $lang['start']                 = 'Имя страницы, используемой как стартовой в каждом пространства имён';
@@ -163,6 +164,7 @@ $lang['search_fragment_o_exact'] = 'точно';
 $lang['search_fragment_o_starts_with'] = 'начинается на';
 $lang['search_fragment_o_ends_with'] = 'заканчивается';
 $lang['search_fragment_o_contains'] = 'содержит';
+$lang['trustedproxy']          = 'Доверять прокси-серверам, соответствующим этому регулярному выражению, в отношении реального IP-адреса клиента, который они сообщают. Значение по умолчанию соответствует локальным сетям. Оставьте пустым, чтобы не доверять никаким прокси-серверам.';
 $lang['dnslookups']            = '«Докувики» ищет DNS-имена пользователей, редактирующих страницы. Если у вас нет DNS-сервера или он работает медленно, рекомендуем отключить эту опцию.';
 $lang['jquerycdn']             = 'Требуется ли загрузка jQuery-скриптов (включая jQuery UI-скрипты) из CDN сети? Данная функция увеличивает количество HTTP запросов, но загрузка файлов будет проходить быстрее и пользователи смогут кэшировать запросы.';
 $lang['jquerycdn_o_0']         = 'Не использовать CDN. Использовать только локальную доставку';

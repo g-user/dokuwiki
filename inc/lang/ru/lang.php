@@ -3,11 +3,11 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Yuriy Skalko <yuriy.skalko@gmail.com>
  * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  * @author Alexander Kh. <001.arx@gmail.com>
  * @author Vyacheslav Strenadko <vyacheslav.strenadko@gmail.com>
  * @author Wolterhon <hotmottot.1@gmail.com>
- * @author Yuriy Skalko <yuriy.skalko@gmail.com>
  * @author Zhassulan <zyesmukanov@gmail.com>
  * @author Yuri Pimenov <up@ftpsearch.lv>
  * @author Igor Tarasov <tigr@mail15.com>
@@ -257,7 +257,7 @@ $lang['mail_newpage']          = 'страница добавлена:';
 $lang['mail_changed']          = 'страница изменена:';
 $lang['mail_subscribe_list']   = 'изменились страницы в пространстве имён:';
 $lang['mail_new_user']         = 'новый пользователь:';
-$lang['mail_upload']           = 'файл закачан:';
+$lang['mail_upload']           = 'файл загружен:';
 $lang['changes_type']          = 'Посмотреть изменения';
 $lang['pages_changes']         = 'страниц';
 $lang['media_changes']         = 'медиафайлов';
