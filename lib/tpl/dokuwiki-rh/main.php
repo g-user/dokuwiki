@@ -9,7 +9,6 @@
  */
 
 if (!defined('DOKU_INC')) die(); /* must be run from within DokuWiki */
-header('X-UA-Compatible: IE=edge,chrome=1');
 
 $hasSidebar = page_findnearest($conf['sidebar']);
 $showSidebar = $hasSidebar && ($ACT=='show');
@@ -30,7 +29,6 @@ $showSidebar = $hasSidebar && ($ACT=='show');
         echo ($showSidebar) ? 'showSidebar' : ''; ?> <?php echo ($hasSidebar) ? 'hasSidebar' : ''; ?>">
 
         <?php include('tpl_header.php') ?>
-
 
         <div class="wrapper group">
 
@@ -74,25 +72,21 @@ $showSidebar = $hasSidebar && ($ACT=='show');
                 <h3 class="a11y"><?php echo $lang['page_tools']; ?></h3>
                 <div class="tools">
                     <ul>
-
-                    <!-- RONNY PAGE ACTIONS -->
                         <?php echo (new \dokuwiki\Menu\PageMenu())->getListItems(); ?>
-
-
+<!-- RONNY PAGE ACTIONS -->
+                         <?php tpl_toolsevent('usertools', array(
+                                                     'login'     => tpl_action('login', 1, 'li', 1,'<span>', '</span>'),
+                                                     'profile'   => tpl_action('profile', 1, 'li', 1,'<span>', '</span>'),
+                                                     'register'  => tpl_action('register', 1, 'li', 1,'<span>', '</span>'),
+                                                     'admin'     => tpl_action('admin', 1, 'li', 1,'<span>', '</span>'),
+                                                         'recent'    => tpl_action('recent', 1, 'li', 1,'<span>', '</span>'),
+                                                     'media'     => tpl_action('media', 1, 'li', 1,'<span>', '</span> <img src='.tpl_basedir().'images/pagetools/11_mediamanager.png width="35px" height="35px" ')
+     )); ?>
 
 <!-- RONNY PAGE ACTIONS -->
-                        <?php tpl_toolsevent('usertools', array(
-						      'login'     => tpl_action('login', 1, 'li', 1,'<span>', '</span>'),
-						      'profile'   => tpl_action('profile', 1, 'li', 1,'<span>', '</span>'),
-						      'register'  => tpl_action('register', 1, 'li', 1,'<span>', '</span>'),
-						      'admin'     => tpl_action('admin', 1, 'li', 1,'<span>', '</span>'),
-       						  'recent'    => tpl_action('recent', 1, 'li', 1,'<span>', '</span>'),
-						      'media'     => tpl_action('media', 1, 'li', 1,'<span>', '</span> <img src='.tpl_basedir().'images/pagetools/11_mediamanager.png width="35px" height="35px" ')
 
 
-    )); ?>
 
-                        <!-- RONNY PAGE ACTIONS -->
                     </ul>
                 </div>
             </div>

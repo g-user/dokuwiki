@@ -25,8 +25,9 @@ if (!defined('DOKU_INC')) die();
             // display logo and wiki title in a link to the home page
             tpl_link(
                 wl(),
-                /* Ronny '<img src="'.$logo.'" '.$logoSize[3].' alt="" /> <span>'.$conf['title'].'</span>','accesskey="h" title="[H]"' */
-                '<img src="'.$logo.'" size height="20" width="20"  alt="" /> '.$conf['title'],'accesskey="h" title="[H]"'
+                /* RH changed '<img src="'.$logo.'" '.$logoSize[3].' alt="" /> <span>'.$conf['title'].'</span>',
+                'accesskey="h" title="[H]"'   */
+'<img src="'.$logo.'" size height="20" width="20"  alt="" /> '.$conf['title'],'accesskey="h" title="[H]"'
             );
         ?></h1>
         <?php if ($conf['tagline']): ?>
@@ -52,11 +53,11 @@ if (!defined('DOKU_INC')) die();
                 </ul>
             </div>
         <?php endif ?>
-RONNY alles raus -->
+bis hierher RONNY alles raus -->
 
         <!-- SITE TOOLS -->
         <div id="dokuwiki__sitetools">
-          <h3 class="a11y"><?php echo $lang['site_tools']; ?></h3>
+            <h3 class="a11y"><?php echo $lang['site_tools']; ?></h3>
             <?php tpl_searchform(); ?>
             <div class="mobileTools">
                 <?php echo (new \dokuwiki\Menu\MobileMenu())->getDropdown($lang['tools']); ?>
@@ -65,7 +66,7 @@ RONNY alles raus -->
             <ul>
                 <?php echo (new \dokuwiki\Menu\SiteMenu())->getListItems('action ', false); ?>
             </ul>
-RONNY alles raus -->
+bis hierher RONNY alles raus -->
         </div>
 
     </div>

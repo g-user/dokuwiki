@@ -1,0 +1,108 @@
+cd /P3/var/www/
+wget https://github.com/g-user/dokuwiki/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-master dokuwiki-neu
+
+
+cd dokuwiki-neu/lib/plugins
+
+wget https://github.com/g-user/dokuwiki-plugin-filelisting/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-filelisting-master filelisting
+rm -r filelisting/_test
+
+
+wget https://github.com/g-user/dwedit/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dwedit-master dwedit
+
+wget https://github.com/g-user/ckgedit/archive/master.zip
+unzip master.zip
+rm master.zip
+mv ckgedit-master ckgedit
+
+wget https://github.com/g-user/docsearch/archive/master.zip
+unzip master.zip
+rm master.zip
+mv docsearch-master docsearch
+
+
+wget https://github.com/g-user/indexmenu/archive/master.zip
+unzip master.zip
+rm master.zip
+mv indexmenu-master indexmenu
+rm -r indexmenu/_test
+
+
+wget https://github.com/g-user/dokuwiki-plugin-dw2pdf/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-dw2pdf-master dw2pdf
+rm -r dw2pdf/_test
+
+wget https://github.com/g-user/dokuwiki-plugin-move/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-move-master move
+rm -r move/_test
+
+wget https://github.com/g-user/abortlogin/archive/master.zip
+unzip master.zip
+rm master.zip
+mv abortlogin-master abortlogin
+
+wget https://github.com/g-user/dokuwiki-plugin-fetchmedia/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-fetchmedia-master fetchmedia
+rm -r fetchmedia/_test
+rm fetchmedia/.babelrc
+rm fetchmedia/.eslintrc.js
+rm fetchmedia/.gitignore
+rm fetchmedia/.travis.yml
+rm fetchmedia/yarn.lock
+
+
+
+cd ../..
+rm index.php
+rm install.php
+rm readme-subrepositories.txt
+mkdir data
+cd ..
+chown -R www-data:www-data dokuwiki-neu
+
+cp -R dokuwiki/data/ dokuwiki-neu
+
+#dann schauen, was sich geändert hat in den Plugin conf-Dateien 
+#find . -name conf >/tmp/conf.txt
+#./conf
+cd dokuwiki
+find . -name conf >/tmp/conf.txt
+cd ..
+rm diff.txt
+cat /tmp/conf.txt | while read line; do  
+echo "############### $line" >> diff.txt
+diff -wbBc dokuwiki/$line  dokuwiki-neu/$line >> diff.txt 
+done
+#hier sieht man dann auch, welche Plugins fehlen!!!
+
+#nun das RH template behandeln -----------------
+rm -r dokuwiki-neu/lib/tpl/dokuwiki-rh
+mkdir  dokuwiki-neu/lib/tpl/dokuwiki-rh
+cp -R dokuwiki-neu/lib/tpl/dokuwiki/. dokuwiki-neu/lib/tpl/dokuwiki-rh
+
+
+cd dokuwiki/lib/tpl/dokuwiki-rh
+find . -type f   -name '*' >/tmp/tpl.txt
+cd ../../../..
+rm diff.txt
+cat /tmp/tpl.txt | while read line; do  
+echo "############### $line" >> diff.txt
+diff -wbBc dokuwiki/lib/tpl/dokuwiki-rh/$line  dokuwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
+done
+
+
