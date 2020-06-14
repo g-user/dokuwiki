@@ -263,7 +263,7 @@ function tpl_metaheaders($alt = true) {
             $head['link'][] = array(
                 'rel'  => 'alternate', 'type'=> 'application/rss+xml',
                 'title'=> $lang['currentns'],
-                'href' => DOKU_BASE.'feed.php?mode=list&ns='.$INFO['namespace']
+                'href' => DOKU_BASE.'feed.php?mode=list&ns='.(isset($INFO) ? $INFO['namespace'] : '')
             );
         }
         if(($ACT == 'show' || $ACT == 'search') && $INFO['writable']) {
@@ -332,31 +332,33 @@ function tpl_metaheaders($alt = true) {
 
     // load stylesheets
     $head['link'][] = array(
-        'rel' => 'stylesheet', 'type'=> 'text/css',
+        'rel' => 'stylesheet',
         'href'=> DOKU_BASE.'lib/exe/css.php?t='.rawurlencode($conf['template']).'&tseed='.$tseed
     );
 
-    $script = "var NS='".$INFO['namespace']."';";
+    $script = "var NS='".(isset($INFO)?$INFO['namespace']:'')."';";
     if($conf['useacl'] && $INPUT->server->str('REMOTE_USER')) {
-        $script .= "var SIG='".toolbar_signature()."';";
+        $script .= "var SIG=".toolbar_signature().";";
     }
     jsinfo();
     $script .= 'var JSINFO = ' . json_encode($JSINFO).';';
-    $head['script'][] = array('type'=> 'text/javascript', '_data'=> $script);
+    $head['script'][] = array('_data'=> $script);
 
     // load jquery
     $jquery = getCdnUrls();
     foreach($jquery as $src) {
         $head['script'][] = array(
-            'type' => 'text/javascript', 'charset' => 'utf-8', '_data' => '', 'src' => $src
-        );
+            'charset' => 'utf-8',
+            '_data' => '',
+            'src' => $src,
+        ) + ($conf['defer_js'] ? [ 'defer' => 'defer'] : []);
     }
 
     // load our javascript dispatcher
     $head['script'][] = array(
-        'type'=> 'text/javascript', 'charset'=> 'utf-8', '_data'=> '',
-        'src' => DOKU_BASE.'lib/exe/js.php'.'?t='.rawurlencode($conf['template']).'&tseed='.$tseed
-    );
+        'charset'=> 'utf-8', '_data'=> '',
+        'src' => DOKU_BASE.'lib/exe/js.php'.'?t='.rawurlencode($conf['template']).'&tseed='.$tseed,
+    ) + ($conf['defer_js'] ? [ 'defer' => 'defer'] : []);
 
     // trigger event here
     Event::createAndTrigger('TPL_METAHEADER_OUTPUT', $head, '_tpl_metaheaders_action', true);
@@ -957,6 +959,7 @@ function tpl_pagetitle($id = null, $ret = false) {
 
         // page functions
         case 'edit' :
+        case 'preview' :
             $page_title = "✎ ".$name;
             break;
 
@@ -1675,13 +1678,15 @@ function tpl_flush() {
  * file, otherwise it is assumed to be relative to the current template
  *
  * @param  string[] $search       locations to look at
- * @param  bool     $abs           if to use absolute URL
- * @param  array   &$imginfo   filled with getimagesize()
+ * @param  bool     $abs          if to use absolute URL
+ * @param  array    &$imginfo     filled with getimagesize()
+ * @param  bool     $fallback     use fallback image if target isn't found or return 'false' if potential
+ *                                false result is required
  * @return string
  *
  * @author Andreas  Gohr <andi@splitbrain.org>
  */
-function tpl_getMediaFile($search, $abs = false, &$imginfo = null) {
+function tpl_getMediaFile($search, $abs = false, &$imginfo = null, $fallback = true) {
     $img     = '';
     $file    = '';
     $ismedia = false;
@@ -1696,6 +1701,17 @@ function tpl_getMediaFile($search, $abs = false, &$imginfo = null) {
         }
 
         if(file_exists($file)) break;
+    }
+
+    // manage non existing target
+    if (!file_exists($file)) {
+        // give result for fallback image
+        if ($fallback === true) {
+            $file = DOKU_INC . 'lib/images/blank.gif';
+            // stop process if false result is required (if $fallback is false)
+        } else {
+            return false;
+        }
     }
 
     // fetch image data if requested
@@ -1845,7 +1861,7 @@ function tpl_classes() {
         'mode_'.$ACT,
         'tpl_'.$conf['template'],
         $INPUT->server->bool('REMOTE_USER') ? 'loggedIn' : '',
-        $INFO['exists'] ? '' : 'notFound',
+        (isset($INFO) && $INFO['exists']) ? '' : 'notFound',
         ($ID == $conf['start']) ? 'home' : '',
     );
     return join(' ', $classes);

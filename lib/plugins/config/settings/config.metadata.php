@@ -125,7 +125,8 @@ $meta['autopasswd']  = array('onoff');
 $meta['authtype']    = array('authtype','_caution' => 'danger');
 $meta['passcrypt']   = array('multichoice','_choices' => array(
     'smd5','md5','apr1','sha1','ssha','lsmd5','crypt','mysql','my411','kmd5','pmd5','hmd5',
-    'mediawiki','bcrypt','djangomd5','djangosha1','djangopbkdf2_sha1','djangopbkdf2_sha256','sha512'
+    'mediawiki','bcrypt','djangomd5','djangosha1','djangopbkdf2_sha1','djangopbkdf2_sha256',
+    'sha512','argon2i','argon2id'
 ));
 $meta['defaultgroup']= array('string');
 $meta['superuser']   = array('string','_caution' => 'danger');
@@ -207,6 +208,7 @@ $meta['rss_content'] = array('multichoice','_choices' => array('abstract','diff'
 $meta['rss_media']   = array('multichoice','_choices' => array('both','pages','media'));
 $meta['rss_update']  = array('numeric');
 $meta['rss_show_summary'] = array('onoff');
+$meta['rss_show_deleted'] = array('onoff');
 
 $meta['_advanced']   = array('fieldset');
 $meta['updatecheck'] = array('onoff');
@@ -228,6 +230,9 @@ $meta['readdircache'] = array('numeric');
 $meta['search_nslimit'] = array('numeric', '_min' => 0);
 $meta['search_fragment'] = array('multichoice','_choices' => array('exact', 'starts_with', 'ends_with', 'contains'),);
 $meta['trustedproxy'] = array('regex');
+
+$meta['_feature_flags'] = ['fieldset'];
+$meta['defer_js']       = ['onoff'];
 
 $meta['_network']    = array('fieldset');
 $meta['dnslookups']  = array('onoff');

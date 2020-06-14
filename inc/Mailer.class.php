@@ -350,7 +350,7 @@ class Mailer {
      * addresses. Addresses must be separated by a comma. If the display
      * name includes a comma then it MUST be properly enclosed by '"' to
      * prevent spliting at the wrong point.
-     * 
+     *
      * Example:
      *   cc("föö <foo@bar.com>, me@somewhere.com","TBcc");
      *   to("foo, Dr." <foo@bar.com>, me@somewhere.com");
@@ -365,7 +365,7 @@ class Mailer {
             $addresses = array();
             if ($count !== false && is_array($matches)) {
                 foreach ($matches as $match) {
-                    array_push($addresses, $match[0]);
+                    array_push($addresses, rtrim($match[0], ','));
                 }
             }
         }
@@ -379,6 +379,7 @@ class Mailer {
                 $text = trim($matches[1]);
                 $addr = $matches[2];
             } else {
+                $text = '';
                 $addr = $part;
             }
             // skip empty ones
@@ -388,12 +389,12 @@ class Mailer {
 
             // FIXME: is there a way to encode the localpart of a emailaddress?
             if(!\dokuwiki\Utf8\Clean::isASCII($addr)) {
-                msg(hsc("E-Mail address <$addr> is not ASCII"), -1);
+                msg(hsc("E-Mail address <$addr> is not ASCII"), -1, __LINE__, __FILE__, MSG_ADMINS_ONLY);
                 continue;
             }
 
             if(!mail_isvalid($addr)) {
-                msg(hsc("E-Mail address <$addr> is not valid"), -1);
+                msg(hsc("E-Mail address <$addr> is not valid"), -1, __LINE__, __FILE__, MSG_ADMINS_ONLY);
                 continue;
             }
 
@@ -635,6 +636,8 @@ class Mailer {
 
         $ip   = clientIP();
         $cip  = gethostsbyaddrs($ip);
+        $name = isset($INFO) ? $INFO['userinfo']['name'] : '';
+        $mail = isset($INFO) ? $INFO['userinfo']['mail'] : '';
 
         $this->replacements['text'] = array(
             'DATE' => dformat(),
@@ -644,8 +647,8 @@ class Mailer {
             'TITLE' => $conf['title'],
             'DOKUWIKIURL' => DOKU_URL,
             'USER' => $INPUT->server->str('REMOTE_USER'),
-            'NAME' => $INFO['userinfo']['name'],
-            'MAIL' => $INFO['userinfo']['mail']
+            'NAME' => $name,
+            'MAIL' => $mail
         );
         $signature = str_replace(
             '@DOKUWIKIURL@',
@@ -662,9 +665,9 @@ class Mailer {
             'TITLE' => hsc($conf['title']),
             'DOKUWIKIURL' => '<a href="' . DOKU_URL . '">' . DOKU_URL . '</a>',
             'USER' => hsc($INPUT->server->str('REMOTE_USER')),
-            'NAME' => hsc($INFO['userinfo']['name']),
-            'MAIL' => '<a href="mailto:"' . hsc($INFO['userinfo']['mail']) . '">' .
-                hsc($INFO['userinfo']['mail']) . '</a>'
+            'NAME' => hsc($name),
+            'MAIL' => '<a href="mailto:"' . hsc($mail) . '">' .
+                hsc($mail) . '</a>'
         );
         $signature = $lang['email_signature_text'];
         if(!empty($lang['email_signature_html'])) {
@@ -693,6 +696,7 @@ class Mailer {
      * @return bool true if the mail was successfully passed to the MTA
      */
     public function send() {
+        global $lang;
         $success = false;
 
         // prepare hook data
@@ -749,6 +753,14 @@ class Mailer {
             // add any headers set by legacy plugins
             if(trim($data['headers'])) {
                 $headers .= MAILHEADER_EOL.trim($data['headers']);
+            }
+
+            if(!function_exists('mail')){
+                $emsg = $lang['email_fail'] . $subject;
+                error_log($emsg);
+                msg(hsc($emsg), -1, __LINE__, __FILE__, MSG_MANAGERS_ONLY);
+                $evt->advise_after();
+                return false;
             }
 
             // send the thing

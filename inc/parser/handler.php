@@ -44,9 +44,54 @@ class Doku_Handler {
      * @param mixed $args arguments for this call
      * @param int $pos  byte position in the original source file
      */
-    protected function addCall($handler, $args, $pos) {
+    public function addCall($handler, $args, $pos) {
         $call = array($handler,$args, $pos);
         $this->callWriter->writeCall($call);
+    }
+
+    /**
+     * Accessor for the current CallWriter
+     *
+     * @return CallWriterInterface
+     */
+    public function getCallWriter() {
+        return $this->callWriter;
+    }
+
+    /**
+     * Set a new CallWriter
+     *
+     * @param CallWriterInterface $callWriter
+     */
+    public function setCallWriter($callWriter) {
+        $this->callWriter = $callWriter;
+    }
+
+    /**
+     * Return the current internal status of the given name
+     *
+     * @param string $status
+     * @return mixed|null
+     */
+    public function getStatus($status) {
+        if (!isset($this->status[$status])) return null;
+        return $this->status[$status];
+    }
+
+    /**
+     * Set a new internal status
+     *
+     * @param string $status
+     * @param mixed $value
+     */
+    public function setStatus($status, $value) {
+        $this->status[$status] = $value;
+    }
+
+    /** @deprecated 2019-10-31 use addCall() instead */
+    public function _addCall($handler, $args, $pos) {
+        dbg_deprecated('addCall');
+        $this->addCall($handler, $args, $pos);
     }
 
     /**
@@ -58,7 +103,7 @@ class Doku_Handler {
      * @param int $pos byte position in the original source file
      * @param string $match matched syntax
      */
-    protected function addPluginCall($plugin, $args, $state, $pos, $match) {
+    public function addPluginCall($plugin, $args, $state, $pos, $match) {
         $call = array('plugin',array($plugin, $args, $state, $match), $pos);
         $this->callWriter->writeCall($call);
     }

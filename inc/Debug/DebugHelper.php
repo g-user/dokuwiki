@@ -41,8 +41,12 @@ class DebugHelper
         self::triggerDeprecationEvent(
             $backtrace,
             $alternative,
-            trim($self['class'] . '::' . $self['function'] . '()', ':'),
-            trim($call['class'] . '::' . $call['function'] . '()', ':'),
+            trim(
+                (!empty($self['class']) ? ($self['class'] . '::') : '') .
+                $self['function'] . '()', ':'),
+            trim(
+                (!empty($call['class']) ? ($call['class'] . '::') : '') .
+                $call['function'] . '()', ':'),
             $call['file'],
             $call['line']
         );
@@ -81,6 +85,48 @@ class DebugHelper
             $backtrace[0]['file'],
             $backtrace[0]['line']
         );
+    }
+
+    /**
+     * Trigger a custom deprecation event
+     *
+     * Usually dbgDeprecatedFunction() or dbgDeprecatedProperty() should be used instead.
+     * This method is intended only for those situation where they are not applicable.
+     *
+     * @param string $alternative
+     * @param string $deprecatedThing
+     * @param string $caller
+     * @param string $file
+     * @param int    $line
+     * @param int    $callerOffset How many lines should be removed from the beginning of the backtrace
+     */
+    public static function dbgCustomDeprecationEvent(
+        $alternative,
+        $deprecatedThing,
+        $caller,
+        $file,
+        $line,
+        $callerOffset = 1
+    ) {
+        global $conf;
+        /** @var EventHandler $EVENT_HANDLER */
+        global $EVENT_HANDLER;
+        if (!$conf['allowdebug'] && !$EVENT_HANDLER->hasHandlerForEvent(self::INFO_DEPRECATION_LOG_EVENT)) {
+            // avoid any work if no one cares
+            return;
+        }
+
+        $backtrace = array_slice(debug_backtrace(), $callerOffset);
+
+        self::triggerDeprecationEvent(
+            $backtrace,
+            $alternative,
+            $deprecatedThing,
+            $caller,
+            $file,
+            $line
+        );
+
     }
 
     /**

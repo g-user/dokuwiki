@@ -34,9 +34,9 @@
     <exclude-pattern>*/inc/cli.php</exclude-pattern>
     <exclude-pattern>*/inc/parser/*</exclude-pattern>
 
-    <!-- rules on top of PSR-2 -->
-    <rule ref="PSR2">
-        <!-- the following rule is not in PSR-2 and breaks the guardian pattern -->
+    <!-- rules on top of PSR-12 -->
+    <rule ref="PSR12">
+        <!-- This rule breaks the single line guard pattern that we prefer to keep using -->
         <exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
 
         <!-- we have lots of legacy classes without name spaces -->
@@ -77,22 +77,4 @@
         <exclude-pattern>*/inc/Extension/PluginInterface.php</exclude-pattern>
         <exclude-pattern>*/inc/Extension/PluginTrait.php</exclude-pattern>
     </rule>
-
-    <!-- for now we mix declarations and execution here (mostly for defines) -->
-    <rule ref="PSR1.Files.SideEffects">
-        <exclude-pattern>*/index.php</exclude-pattern>
-        <exclude-pattern>*/inc/parserutils.php</exclude-pattern>
-        <exclude-pattern>*/inc/mail.php</exclude-pattern>
-        <exclude-pattern>*/inc/init.php</exclude-pattern>
-        <exclude-pattern>*/inc/fulltext.php</exclude-pattern>
-        <exclude-pattern>*/inc/Mailer.class.php</exclude-pattern>
-        <exclude-pattern>*/doku.php</exclude-pattern>
-        <exclude-pattern>*/install.php</exclude-pattern>
-        <exclude-pattern>*/inc/utf8.php</exclude-pattern>
-        <exclude-pattern>*/feed.php</exclude-pattern>
-        <exclude-pattern>*/inc/load.php</exclude-pattern>
-        <exclude-pattern>*/bin/*.php</exclude-pattern>
-        <exclude-pattern>*/lib/exe/*.php</exclude-pattern>
-    </rule>
-
 </ruleset>

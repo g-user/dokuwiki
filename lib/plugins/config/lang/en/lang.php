@@ -155,6 +155,7 @@ $lang['rss_linkto']        = 'XML feed links to';
 $lang['rss_content']       = 'What to display in the XML feed items?';
 $lang['rss_update']        = 'XML feed update interval (sec)';
 $lang['rss_show_summary']  = 'XML feed show summary in title';
+$lang['rss_show_deleted']  = 'XML feed Show deleted feeds';
 $lang['rss_media']         = 'What kind of changes should be listed in the XML feed?';
 $lang['rss_media_o_both']  = 'both';
 $lang['rss_media_o_pages'] = 'pages';
@@ -186,6 +187,9 @@ $lang['search_fragment_o_starts_with'] = 'starts with';
 $lang['search_fragment_o_ends_with'] = 'ends with';
 $lang['search_fragment_o_contains'] = 'contains';
 $lang['trustedproxy'] = 'Trust forwarding proxies matching this regular expression about the true client IP they report. The default matches local networks. Leave empty to trust no proxy.';
+
+$lang['_feature_flags'] = 'Feature Flags';
+$lang['defer_js'] = 'Defer javascript to be execute after the page\'s HTML has been parsed. Improves perceived page speed but could break a small number of plugins.';
 
 /* Network Options */
 $lang['dnslookups'] = 'DokuWiki will lookup hostnames for remote IP addresses of users editing pages. If you have a slow or non working DNS server or don\'t want this feature, disable this option';

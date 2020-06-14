@@ -6,14 +6,6 @@
  * @author     Andreas Gohr <andi@splitbrain.org>
  */
 
-// Constants for known core changelog line types.
-// Use these in place of string literals for more readable code.
-define('DOKU_CHANGE_TYPE_CREATE',       'C');
-define('DOKU_CHANGE_TYPE_EDIT',         'E');
-define('DOKU_CHANGE_TYPE_MINOR_EDIT',   'e');
-define('DOKU_CHANGE_TYPE_DELETE',       'D');
-define('DOKU_CHANGE_TYPE_REVERT',       'R');
-
 /**
  * parses a changelog line into it's components
  *
@@ -113,7 +105,7 @@ function addLogEntry($date, $id, $type=DOKU_CHANGE_TYPE_EDIT, $summary='', $extr
             // newly created
             $meta['date']['created'] = $created;
             if ($user){
-                $meta['creator'] = $INFO['userinfo']['name'];
+                $meta['creator'] = isset($INFO) ? $INFO['userinfo']['name'] : null;
                 $meta['user']    = $user;
             }
         } elseif (($wasCreated || $wasReverted) && !empty($oldmeta['persistent']['date']['created'])) {
@@ -121,10 +113,10 @@ function addLogEntry($date, $id, $type=DOKU_CHANGE_TYPE_EDIT, $summary='', $extr
             $meta['date']['created']  = $oldmeta['persistent']['date']['created'];
             $meta['date']['modified'] = $created; // use the files ctime here
             $meta['creator'] = $oldmeta['persistent']['creator'];
-            if ($user) $meta['contributor'][$user] = $INFO['userinfo']['name'];
+            if ($user) $meta['contributor'][$user] = isset($INFO) ? $INFO['userinfo']['name'] : null;
         } elseif (!$minor) {   // non-minor modification
             $meta['date']['modified'] = $date;
-            if ($user) $meta['contributor'][$user] = $INFO['userinfo']['name'];
+            if ($user) $meta['contributor'][$user] = isset($INFO) ? $INFO['userinfo']['name'] : null;
         }
         $meta['last_change'] = $logline;
         p_set_metadata($id, $meta);
@@ -205,6 +197,7 @@ function addMediaLogEntry(
  *
  * RECENTS_SKIP_DELETED   - don't include deleted pages
  * RECENTS_SKIP_MINORS    - don't include minor changes
+ * RECENTS_ONLY_CREATION  - only include new created pages and media
  * RECENTS_SKIP_SUBSPACES - don't include subspaces
  * RECENTS_MEDIA_CHANGES  - return media changes instead of page changes
  * RECENTS_MEDIA_PAGES_MIXED  - return both media changes and page changes
@@ -299,6 +292,7 @@ function getRecents($first,$num,$ns='',$flags=0){
  *
  * RECENTS_SKIP_DELETED   - don't include deleted pages
  * RECENTS_SKIP_MINORS    - don't include minor changes
+ * RECENTS_ONLY_CREATION  - only include new created pages and media
  * RECENTS_SKIP_SUBSPACES - don't include subspaces
  * RECENTS_MEDIA_CHANGES  - return media changes instead of page changes
  *
@@ -372,6 +366,9 @@ function _handleRecent($line,$ns,$flags,&$seen){
 
     // skip seen ones
     if(isset($seen[$recent['id']])) return false;
+
+    // skip changes, of only new items are requested
+    if($recent['type']!==DOKU_CHANGE_TYPE_CREATE && ($flags & RECENTS_ONLY_CREATION)) return false;
 
     // skip minors
     if($recent['type']===DOKU_CHANGE_TYPE_MINOR_EDIT && ($flags & RECENTS_SKIP_MINORS)) return false;

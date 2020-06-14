@@ -136,6 +136,7 @@ $conf['rss_media']   = 'both';           //what should be listed?
                                          //  'media'    - media changes only
 $conf['rss_update'] = 5*60;              //Update the RSS feed every n seconds (defaults to 5 minutes)
 $conf['rss_show_summary'] = 1;           //Add revision summary to title? 0|1
+$conf['rss_show_deleted'] = 1;           //Show deleted items 0|1
 
 /* Advanced Settings */
 $conf['updatecheck'] = 1;                //automatically check for new releases?
@@ -161,6 +162,9 @@ $conf['search_fragment'] = 'exact';      //specify the default fragment search b
 $conf['trustedproxy'] = '^(::1|[fF][eE]80:|127\.|10\.|192\.168\.|172\.((1[6-9])|(2[0-9])|(3[0-1]))\.)';
                                          //Regexp of trusted proxy address when reading IP using HTTP header
                                          //  if blank, do not trust any proxy (including local IP)
+
+/* Feature Flags */
+$conf['defer_js'] = 1;                   // Defer javascript to be executed after the page's HTML has been parsed. Setting will be removed in the next release.
 
 /* Network Settings */
 $conf['dnslookups'] = 1;                 //disable to disallow IP to hostname lookups

@@ -46,7 +46,7 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
     <meta charset="utf-8" />
     <title><?php echo $lang['i_installer']?></title>
-    <style type="text/css">
+    <style>
         body { width: 90%; margin: 0 auto; font: 84% Verdana, Helvetica, Arial, sans-serif; }
         img { border: none }
         br.cl { clear:both; }
@@ -56,7 +56,7 @@ header('Content-Type: text/html; charset=utf-8');
         select.text, input.text { width: 30em; margin: 0 0.5em; }
         a {text-decoration: none}
     </style>
-    <script type="text/javascript">
+    <script>
         function acltoggle(){
             var cb = document.getElementById('acl');
             var fs = document.getElementById('acldep');
@@ -565,9 +565,23 @@ function check_functions(){
         $ok = false;
     }
 
+    try {
+        random_bytes(1);
+    } catch (\Exception $th) {
+        // If an appropriate source of randomness cannot be found, an Exception will be thrown by PHP 7+
+        // this exception is also thrown by paragonie/random_compat for PHP 5.6 support
+        $error[] = $lang['i_urandom'];
+        $ok = false;
+    }
+
+    if(ini_get('mbstring.func_overload') != 0){
+        $error[] = $lang['i_mbfuncoverload'];
+        $ok = false;
+    }
+
     $funcs = explode(' ','addslashes call_user_func chmod copy fgets '.
                          'file file_exists fseek flush filesize ftell fopen '.
-                         'glob header ignore_user_abort ini_get mail mkdir '.
+                         'glob header ignore_user_abort ini_get mkdir '.
                          'ob_start opendir parse_ini_file readfile realpath '.
                          'rename rmdir serialize session_start unlink usleep '.
                          'preg_replace file_get_contents htmlspecialchars_decode '.
@@ -576,6 +590,16 @@ function check_functions(){
     if (!function_exists('mb_substr')) {
         $funcs[] = 'utf8_encode';
         $funcs[] = 'utf8_decode';
+    }
+
+    if(!function_exists('mail')){
+        if(strpos(ini_get('disable_functions'),'mail') !== false) {
+            $disabled = $lang['i_disabled'];
+        }
+        else {
+            $disabled = "";
+        }
+        $error[] = sprintf($lang['i_funcnmail'],$disabled);
     }
 
     foreach($funcs as $func){

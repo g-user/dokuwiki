@@ -916,12 +916,7 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
         $link['style']  = '';
         $link['pre']    = '';
         $link['suf']    = '';
-        // highlight link to current page
-        if($id == $INFO['id']) {
-            $link['pre'] = '<span class="curid">';
-            $link['suf'] = '</span>';
-        }
-        $link['more']   = '';
+        $link['more']   = 'data-wiki-id="'.$id.'"'; // id is already cleaned
         $link['class']  = $class;
         if($this->date_at) {
             $params = $params.'&at='.rawurlencode($this->date_at);
@@ -1062,11 +1057,13 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
         $link['url']   = $url;
         $link['title'] = htmlspecialchars($link['url']);
 
-        //output formatted
+        // output formatted
         if($returnonly) {
+            if($url == '') return $link['name'];
             return $this->_formatLink($link);
         } else {
-            $this->doc .= $this->_formatLink($link);
+            if($url == '') $this->doc .= $link['name'];
+            else $this->doc .= $this->_formatLink($link);
         }
     }
 
@@ -1248,9 +1245,17 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
             list($shortcut, $reference) = explode('>', $src, 2);
             $exists = null;
             $src = $this->_resolveInterWiki($shortcut, $reference, $exists);
+            if($src == '' && empty($title)){
+                // make sure at least something will be shown in this case
+                $title = $reference;
+            }
         }
         list($src, $hash) = explode('#', $src, 2);
         $noLink = false;
+        if($src == '') {
+            // only output plaintext without link if there is no src
+            $noLink = true;
+        }
         $render = ($linking == 'linkonly') ? false : true;
         $link   = $this->_getMediaLinkConf($src, $title, $align, $width, $height, $cache, $render);
 
@@ -1637,7 +1642,7 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
             if(!$render) {
                 // if the picture is not supposed to be rendered
                 // return the title of the picture
-                if(!$title) {
+                if($title === null || $title === "") {
                     // just show the sourcename
                     $title = $this->_xmlEntities(\dokuwiki\Utf8\PhpString::basename(noNS($src)));
                 }
@@ -1671,11 +1676,11 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
 
         } elseif(media_supportedav($mime, 'video') || media_supportedav($mime, 'audio')) {
             // first get the $title
-            $title = !is_null($title) ? $this->_xmlEntities($title) : false;
+            $title = !is_null($title) ? $title : false;
             if(!$render) {
                 // if the file is not supposed to be rendered
                 // return the title of the file (just the sourcename if there is no title)
-                return $title ? $title : $this->_xmlEntities(\dokuwiki\Utf8\PhpString::basename(noNS($src)));
+                return $this->_xmlEntities($title ? $title : \dokuwiki\Utf8\PhpString::basename(noNS($src)));
             }
 
             $att          = array();

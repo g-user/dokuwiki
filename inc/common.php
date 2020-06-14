@@ -15,15 +15,6 @@ use dokuwiki\Extension\AuthPlugin;
 use dokuwiki\Extension\Event;
 
 /**
- * These constants are used with the recents function
- */
-define('RECENTS_SKIP_DELETED', 2);
-define('RECENTS_SKIP_MINORS', 4);
-define('RECENTS_SKIP_SUBSPACES', 8);
-define('RECENTS_MEDIA_CHANGES', 16);
-define('RECENTS_MEDIA_PAGES_MIXED', 32);
-
-/**
  * Wrapper around htmlspecialchars()
  *
  * @author Andreas Gohr <andi@splitbrain.org>
@@ -217,12 +208,8 @@ function pageinfo() {
     $info['id']  = $ID;
     $info['rev'] = $REV;
 
-    if($INPUT->server->has('REMOTE_USER')) {
-        $subManager = new SubscriberManager();
-        $info['subscribed'] = $subManager->userSubscription();
-    } else {
-        $info['subscribed'] = false;
-    }
+    $subManager = new SubscriberManager();
+    $info['subscribed'] = $subManager->userSubscription();
 
     $info['locked']     = checklock($ID);
     $info['filepath']   = wikiFN($ID);
@@ -280,16 +267,23 @@ function pageinfo() {
         p_set_metadata($ID, array('last_change' => $revinfo));
     }
 
-    $info['ip']   = $revinfo['ip'];
-    $info['user'] = $revinfo['user'];
-    $info['sum']  = $revinfo['sum'];
-    // See also $INFO['meta']['last_change'] which is the most recent log line for page $ID.
-    // Use $INFO['meta']['last_change']['type']===DOKU_CHANGE_TYPE_MINOR_EDIT in place of $info['minor'].
+    if($revinfo !== false){
+        $info['ip']   = $revinfo['ip'];
+        $info['user'] = $revinfo['user'];
+        $info['sum']  = $revinfo['sum'];
+        // See also $INFO['meta']['last_change'] which is the most recent log line for page $ID.
+        // Use $INFO['meta']['last_change']['type']===DOKU_CHANGE_TYPE_MINOR_EDIT in place of $info['minor'].
 
-    if($revinfo['user']) {
-        $info['editor'] = $revinfo['user'];
-    } else {
-        $info['editor'] = $revinfo['ip'];
+        if($revinfo['user']) {
+            $info['editor'] = $revinfo['user'];
+        } else {
+            $info['editor'] = $revinfo['ip'];
+        }
+    }else{
+        $info['ip']     = null;
+        $info['user']   = null;
+        $info['sum']    = null;
+        $info['editor'] = null;
     }
 
     // draft
@@ -312,7 +306,7 @@ function jsinfo() {
     }
     //export minimal info to JS, plugins can add more
     $JSINFO['id']                    = $ID;
-    $JSINFO['namespace']             = (string) $INFO['namespace'];
+    $JSINFO['namespace']             = isset($INFO) ? (string) $INFO['namespace'] : '';
     $JSINFO['ACT']                   = act_clean($ACT);
     $JSINFO['useHeadingNavigation']  = (int) useHeading('navigation');
     $JSINFO['useHeadingContent']     = (int) useHeading('content');
@@ -362,16 +356,16 @@ function buildURLparams($params, $sep = '&amp;') {
  *
  * @author Andreas Gohr
  *
- * @param array $params    array with (attribute name-attribute value) pairs
- * @param bool  $skipempty skip empty string values?
+ * @param array $params           array with (attribute name-attribute value) pairs
+ * @param bool  $skipEmptyStrings skip empty string values?
  * @return string
  */
-function buildAttributes($params, $skipempty = false) {
+function buildAttributes($params, $skipEmptyStrings = false) {
     $url   = '';
     $white = false;
     foreach($params as $key => $val) {
         if($key[0] == '_') continue;
-        if($val === '' && $skipempty) continue;
+        if($val === '' && $skipEmptyStrings) continue;
         if($white) $url .= ' ';
 
         $url .= $key.'="';
@@ -1171,9 +1165,9 @@ function parsePageTemplate(&$data) {
              $id,
              getNS($id),
              curNS($id),
-             utf8_ucfirst(curNS($id)),
-             utf8_ucwords(curNS($id)),
-             utf8_strtoupper(curNS($id)),
+             \dokuwiki\Utf8\PhpString::ucfirst(curNS($id)),
+             \dokuwiki\Utf8\PhpString::ucwords(curNS($id)),
+             \dokuwiki\Utf8\PhpString::strtoupper(curNS($id)),
              $file,
              \dokuwiki\Utf8\PhpString::ucfirst($file),
              \dokuwiki\Utf8\PhpString::strtoupper($file),
@@ -1182,8 +1176,8 @@ function parsePageTemplate(&$data) {
              \dokuwiki\Utf8\PhpString::ucwords($page),
              \dokuwiki\Utf8\PhpString::strtoupper($page),
              $INPUT->server->str('REMOTE_USER'),
-             $USERINFO['name'],
-             $USERINFO['mail'],
+             $USERINFO ? $USERINFO['name'] : '',
+             $USERINFO ? $USERINFO['mail'] : '',
              $conf['dformat'],
         ), $tpl
     );
@@ -1491,7 +1485,7 @@ function notify($id, $who, $rev = '', $summary = '', $minor = false, $replace = 
         $data = array('id' => $id, 'addresslist' => '', 'self' => false, 'replacements' => $replace);
         Event::createAndTrigger(
             'COMMON_NOTIFY_ADDRESSLIST', $data,
-            array(new Subscription(), 'notifyaddresses')
+            array(new SubscriberManager(), 'notifyAddresses')
         );
         $to = $data['addresslist'];
         if(empty($to)) return false;
@@ -1661,7 +1655,7 @@ function obfuscate($email) {
             return strtr($email, $obfuscate);
 
         case 'hex' :
-            return utf8_tohtml($email, true);
+            return \dokuwiki\Utf8\Conversion::toHtml($email, true);
 
         case 'none' :
         default :
