@@ -1,9 +1,10 @@
 cd /P3/var/www/
+#   dwiki-neu must not exist! 
+
 wget https://github.com/g-user/dokuwiki/archive/master.zip
 unzip master.zip
 rm master.zip
 mv dokuwiki-master dwiki-neu
-
 
 cd dwiki-neu/lib/plugins
 
@@ -75,7 +76,7 @@ mkdir data
 cd ..
 chown -R www-data:www-data dwiki-neu
 
-cp -R dokuwiki/data/ dwiki-neu
+#cp -R dokuwiki/data/ dwiki-neu
 
 #dann schauen, was sich geändert hat in den Plugin conf-Dateien 
 #find . -name conf >/tmp/conf.txt
@@ -104,5 +105,6 @@ cat /tmp/tpl.txt | while read line; do
 echo "############### $line" >> diff.txt
 diff -wbBc dokuwiki/lib/tpl/dokuwiki-rh/$line  dwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
 done
+chown -R www-data:www-data dwiki-neu
 
 
