@@ -2,10 +2,10 @@ cd /P3/var/www/
 wget https://github.com/g-user/dokuwiki/archive/master.zip
 unzip master.zip
 rm master.zip
-mv dokuwiki-master dokuwiki-neu
+mv dokuwiki-master dwiki-neu
 
 
-cd dokuwiki-neu/lib/plugins
+cd dwiki-neu/lib/plugins
 
 wget https://github.com/g-user/dokuwiki-plugin-filelisting/archive/master.zip
 unzip master.zip
@@ -73,9 +73,9 @@ rm install.php
 rm readme-subrepositories.txt
 mkdir data
 cd ..
-chown -R www-data:www-data dokuwiki-neu
+chown -R www-data:www-data dwiki-neu
 
-cp -R dokuwiki/data/ dokuwiki-neu
+cp -R dokuwiki/data/ dwiki-neu
 
 #dann schauen, was sich geändert hat in den Plugin conf-Dateien 
 #find . -name conf >/tmp/conf.txt
@@ -86,14 +86,14 @@ cd ..
 rm diff.txt
 cat /tmp/conf.txt | while read line; do  
 echo "############### $line" >> diff.txt
-diff -wbBc dokuwiki/$line  dokuwiki-neu/$line >> diff.txt 
+diff -wbBc dokuwiki/$line  dwiki-neu/$line >> diff.txt 
 done
 #hier sieht man dann auch, welche Plugins fehlen!!!
 
 #nun das RH template behandeln -----------------
-rm -r dokuwiki-neu/lib/tpl/dokuwiki-rh
-mkdir  dokuwiki-neu/lib/tpl/dokuwiki-rh
-cp -R dokuwiki-neu/lib/tpl/dokuwiki/. dokuwiki-neu/lib/tpl/dokuwiki-rh
+rm -r dwiki-neu/lib/tpl/dokuwiki-rh
+mkdir  dwiki-neu/lib/tpl/dokuwiki-rh
+cp -R dwiki-neu/lib/tpl/dokuwiki/. dwiki-neu/lib/tpl/dokuwiki-rh
 
 
 cd dokuwiki/lib/tpl/dokuwiki-rh
@@ -102,7 +102,7 @@ cd ../../../..
 rm diff.txt
 cat /tmp/tpl.txt | while read line; do  
 echo "############### $line" >> diff.txt
-diff -wbBc dokuwiki/lib/tpl/dokuwiki-rh/$line  dokuwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
+diff -wbBc dokuwiki/lib/tpl/dokuwiki-rh/$line  dwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
 done
 
 
