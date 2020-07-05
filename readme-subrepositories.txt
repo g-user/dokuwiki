@@ -9,3 +9,5 @@ sub-repos are:
 \lib\plugins\move
 \lib\plugins\abortlogin
 \lib\plugins\fetchmedia
+\lib\plugins\pdfjs
+

@@ -20,10 +20,17 @@ unzip master.zip
 rm master.zip
 mv dwedit-master dwedit
 
-wget https://github.com/g-user/ckgedit/archive/master.zip
-unzip master.zip
-rm master.zip
-mv ckgedit-master ckgedit
+#hogfather problems, so no master ...
+#wget https://github.com/g-user/ckgedit/archive/master.zip
+#unzip master.zip
+#rm master.zip
+#mv ckgedit-master ckgedit
+
+wget https://github.com/g-user/ckgedit/archive/hogfather_rc3.zip
+unzip hogfather_rc3.zip
+rm hogfather_rc3.zip
+mv ckgedit-hogfather_rc3 ckgedit
+
 
 wget https://github.com/g-user/docsearch/archive/master.zip
 unzip master.zip
@@ -55,6 +62,14 @@ unzip master.zip
 rm master.zip
 mv abortlogin-master abortlogin
 
+
+wget https://github.com/g-user/dokuwiki-plugin-pdfjs/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-pdfjs-master pdfjs
+
+
+
 wget https://github.com/g-user/dokuwiki-plugin-fetchmedia/archive/master.zip
 unzip master.zip
 rm master.zip
@@ -73,7 +88,21 @@ rm index.php
 rm install.php
 rm readme-subrepositories.txt
 mkdir data
+mkdir data/attic
+mkdir data/cache
+mkdir data/index
+mkdir data/locks
+mkdir data/media
+mkdir data/media_attic
+mkdir data/media_meta
+mkdir data/meta
+mkdir data/pages
+mkdir data/tmp
 cd ..
+cp dokuwiki/data/pages/sidebar.txt dwiki-neu/data/pages
+#DANGER! copy auth-data
+cp dokuwiki/conf/users.auth.php  dwiki-neu/conf
+
 chown -R www-data:www-data dwiki-neu
 
 #cp -R dokuwiki/data/ dwiki-neu
@@ -90,8 +119,25 @@ echo "############### $line" >> diff.txt
 diff -wbBc dokuwiki/$line  dwiki-neu/$line >> diff.txt 
 done
 #hier sieht man dann auch, welche Plugins fehlen!!!
+cat diff.txt
+
+
+cp dokuwiki/conf/local.php dwiki-neu/conf
+cp dokuwiki/conf/mime.local.conf dwiki-neu/conf
+cp dokuwiki/conf/plugins.local.php dwiki-neu/conf
+cp dokuwiki/conf/local.php dwiki-neu/conf
+cp dokuwiki/conf/users.auth.php dwiki-neu/conf
+cp dokuwiki/lib/plugins/docsearch/conf/converter.php dwiki-neu/lib/plugins/docsearch/conf
+
+chown -R www-data:www-data dwiki-neu
+
+
 
 #nun das RH template behandeln -----------------
+# oder einfach kopieren: 
+# cp -r dokuwiki/lib/tpl/dokuwiki-rh dwiki-neu/lib/tpl
+# chown -R www-data:www-data dwiki-neu
+
 rm -r dwiki-neu/lib/tpl/dokuwiki-rh
 mkdir  dwiki-neu/lib/tpl/dokuwiki-rh
 cp -R dwiki-neu/lib/tpl/dokuwiki/. dwiki-neu/lib/tpl/dokuwiki-rh
