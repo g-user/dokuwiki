@@ -1,0 +1,13 @@
+dokuwiki\lib\plugins\abortlogin
+dokuwiki\lib\plugins\ckgedit
+dokuwiki\lib\plugins\docsearch
+dokuwiki\lib\plugins\dw2pdf
+dokuwiki\lib\plugins\dwedit
+dokuwiki\lib\plugins\fetchmedia
+dokuwiki\lib\plugins\filelisting
+dokuwiki\lib\plugins\folded
+dokuwiki\lib\plugins\indexmenu
+dokuwiki\lib\plugins\move
+dokuwiki\lib\plugins\pdfjs
+
+
