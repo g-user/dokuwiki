@@ -1,0 +1,148 @@
+mkdir dwiki-neu
+cd dwiki-neu
+wget https://github.com/g-user/dokuwiki/archive/master.zip
+unzip master.zip
+rm master.zip
+cd dokuwiki-master
+mv * ..
+mv .h* ..
+cd ..
+rmdir  dokuwiki-master
+
+
+cd lib/plugins
+
+wget https://github.com/g-user/dokuwiki-plugin-filelisting/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-filelisting-master filelisting
+
+
+wget https://github.com/g-user/dwedit/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dwedit-master dwedit
+
+
+entweder:
+
+wget https://github.com/g-user/ckgedit/archive/master.zip
+unzip master.zip
+rm master.zip
+mv ckgedit-master ckgedit
+
+
+oder 
+
+wget https://github.com/g-user/ckgedit/archive/uploadimage.zip
+unzip uploadimage.zip
+rm uploadimage.zip
+mv ckgedit-uploadimage ckgedit
+
+
+
+
+wget https://github.com/g-user/docsearch/archive/master.zip
+unzip master.zip
+rm master.zip
+mv docsearch-master docsearch
+
+
+wget https://github.com/g-user/indexmenu/archive/master.zip
+unzip master.zip
+rm master.zip
+mv indexmenu-master indexmenu
+
+
+wget https://github.com/g-user/dokuwiki-plugin-dw2pdf/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-dw2pdf-master dw2pdf
+
+wget https://github.com/g-user/dokuwiki-plugin-move/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-move-master move
+
+wget https://github.com/g-user/abortlogin/archive/master.zip
+unzip master.zip
+rm master.zip
+mv abortlogin-master abortlogin
+
+wget https://github.com/g-user/dokuwiki-plugin-fetchmedia/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-fetchmedia-master fetchmedia
+
+
+wget https://github.com/g-user/dokuwiki-plugin-pdfjs/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-pdfjs-master pdfjs
+
+wget  https://github.com/g-user/dokuwiki-plugin-folded/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-folded-master folded
+
+wget  https://github.com/g-user/dokuwiki-plugin-subpages/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-subpages-master subpages
+
+
+
+
+
+cd ../..
+rm index.php
+rm install.php
+rm readme-subrepositories.txt
+mkdir data
+cd ..
+chown -R www-data:www-data dwiki-neu
+
+cp -R dokuwiki/data/ dwiki-neu
+
+#dann schauen, was sich geändert hat in den Plugin conf-Dateien 
+#find . -name conf >/tmp/conf.txt
+#./conf
+
+
+cd dokuwiki
+find . -name conf >/tmp/conf.txt
+cd ..
+rm diff.txt
+cat /tmp/conf.txt | while read line; do  
+diff -w dokuwiki/$line  dwiki-neu/$line >> diff.txt 
+done
+#hier sieht man dann, welche Plugins fehlen!!!
+
+
+cp dokuwiki/conf/local.*  dwiki-neu/conf
+cp dokuwiki/conf/acl.auth.php dwiki-neu/conf
+cp dokuwiki/conf/users.auth.php dwiki-neu/conf
+chown -R www-data:www-data  dwiki-neu
+
+
+
+
+
+
+
+--ab hier nur test uber das neue Template!
+
+#nun das RH template behandeln -----------------
+#mkdir  dokuwiki-neu/lib/tpl/dokuwiki-rh
+#cp -R dokuwiki/lib/tpl/dokuwiki/. dokuwiki-neu/lib/tpl/dokuwiki-rh
+
+
+cd dokuwiki/lib/tpl/dokuwiki
+find . -type f   -name '*' >/tmp/tpl.txt
+cd ../../../..
+rm diff.txt
+cat /tmp/tpl.txt | while read line; do  
+diff -w dokuwiki/lib/tpl/dokuwiki-rh/$line  dokuwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
+done
+
+

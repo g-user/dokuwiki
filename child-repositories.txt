@@ -9,5 +9,6 @@ dokuwiki\lib\plugins\folded
 dokuwiki\lib\plugins\indexmenu
 dokuwiki\lib\plugins\move
 dokuwiki\lib\plugins\pdfjs
+dokuwiki\lib\plugins\subpages
 
 
