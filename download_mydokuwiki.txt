@@ -135,7 +135,7 @@ chown -R www-data:www-data  dwiki-neu
 
 #nun das RH template behandeln -----------------
 #mkdir  dokuwiki-neu/lib/tpl/dokuwiki-rh
-#cp -R dokuwiki/lib/tpl/dokuwiki/. dokuwiki-neu/lib/tpl/dokuwiki-rh
+#cp -R dokuwiki/lib/tpl/dokuwiki/. dwiki-neu/lib/tpl/dokuwiki-rh
 
 
 cd dokuwiki/lib/tpl/dokuwiki
@@ -143,7 +143,7 @@ find . -type f   -name '*' >/tmp/tpl.txt
 cd ../../../..
 rm diff.txt
 cat /tmp/tpl.txt | while read line; do  
-diff -w dokuwiki/lib/tpl/dokuwiki-rh/$line  dokuwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
+diff -w dokuwiki/lib/tpl/dokuwiki-rh/$line  dwiki-neu/lib/tpl/dokuwiki-rh/$line >> diff.txt 
 done
 
 
