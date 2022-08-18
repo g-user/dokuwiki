@@ -120,6 +120,7 @@ done
 
 
 cp dokuwiki/conf/local.*  dwiki-neu/conf
+cp dokuwiki/conf/mime.local.conf  dwiki-neu/conf
 cp dokuwiki/conf/acl.auth.php dwiki-neu/conf
 cp dokuwiki/conf/users.auth.php dwiki-neu/conf
 cp dokuwiki/conf/userstyle.css  dwiki-neu/conf
