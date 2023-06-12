@@ -103,7 +103,7 @@ cd ..
 chown -R www-data:www-data dwiki-neu
 
 #cp -R dokuwiki/data/ dwiki-neu
-rsync --delete -avz /var/www/dokuwiki/data/  /var/www/dwiki-neu
+rsync --delete -avz /var/www/dokuwiki/data/  /var/www/dwiki-neu/data
 
 #dann schauen, was sich geändert hat in den Plugin conf-Dateien 
 #find . -name conf >/tmp/conf.txt
