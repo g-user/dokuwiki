@@ -3,6 +3,7 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Mykhailo <mvkorobkov@gmail.com>
  * @author velmyshanovnyi <velmyshanovnyi@gmail.com>
  * @author Dmytro Marchenko <dmytro.marchenko1989@gmail.com>
  * @author Oleksii <alexey.furashev@gmail.com>
@@ -93,8 +94,6 @@ $lang['indexdelay']            = 'Затримка перед індексаці
 $lang['mailguard']             = 'Кодувати адреси e-mail';
 $lang['iexssprotect']          = 'Перевірте оновлені файли на можливі заборонені Javascript чи HTML коди';
 $lang['usedraft']              = 'Автоматично зберігати чернетку при редагуванні';
-$lang['htmlok']                = 'Дозволити HTML';
-$lang['phpok']                 = 'Дозволити PHP';
 $lang['locktime']              = 'Час блокування (сек)';
 $lang['cachetime']             = 'Максимальний вік кешу (сек)';
 $lang['target____wiki']        = 'Target для внутрішніх посилань';
