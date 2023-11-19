@@ -90,6 +90,11 @@ unzip master.zip
 rm master.zip
 mv dokuwiki-plugin-subpages-master subpages
 
+wget  https://github.com/g-user/dokuwiki-plugin-stlviewer/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-stlviewer-master stlviewer
+
 
 
 
