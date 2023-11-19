@@ -46,6 +46,8 @@ wget https://github.com/g-user/docsearch/archive/master.zip
 unzip master.zip
 rm master.zip
 mv docsearch-master docsearch
+mv docsearch/conf/converter.php.my docsearch/conf/converter.php
+echo set cronjob !!! 
 
 
 wget https://github.com/g-user/indexmenu/archive/master.zip
@@ -133,6 +135,12 @@ cp dokuwiki/conf/userstyle.css  dwiki-neu/conf
 chown -R www-data:www-data  dwiki-neu
 
 
+#cronjobs for user www-data
+##Dokuwiki-Backup
+#10 3 * * * /usr/bin/rsync -a --delete /P3/var/www/dokuwiki/data/pages /P3/var/www/nextcloud/data/Ronny/files/dokuwiki-data
+#15 3 * * * /usr/bin/rsync -a --delete /P3/var/www/dokuwiki/data/media /P3/var/www/nextcloud/data/Ronny/files/dokuwiki-data
+##Dokuwiki document indexer
+#0 2 * * * php /var/www/dokuwiki/lib/plugins/docsearch/cron.php
 
 
 
