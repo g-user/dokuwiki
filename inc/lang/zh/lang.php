@@ -3,6 +3,8 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author 林晓东 <lin_xd@126.com>
+ * @author alair <Mail@alair.top>
  * @author better <betterzhubo@live.com>
  * @author 小李 <szsd5257@foxmail.com>
  * @author VinnieChow <zsz33@qq.com>
@@ -58,7 +60,7 @@ $lang['btn_preview']           = '预览';
 $lang['btn_top']               = '回到顶部';
 $lang['btn_newer']             = '<< 较新的';
 $lang['btn_older']             = '较旧的 >>';
-$lang['btn_revs']              = '修订记录';
+$lang['btn_revs']              = '过去修订';
 $lang['btn_recent']            = '最近更改';
 $lang['btn_upload']            = '上传';
 $lang['btn_cancel']            = '取消';
@@ -400,3 +402,6 @@ $lang['page_nonexist_rev']     = '页面在 %s 不存在。它曾创建于 <a hr
 $lang['unable_to_parse_date']  = '无法解析参数 "%s"。';
 $lang['email_signature_text']  = '本邮件由 DokuWiki 自动创建
 @DOKUWIKIURL@';
+$lang['log_file_too_large']    = '日志文件太大。跳过前几行!';
+$lang['log_file_failed_to_open'] = '日志文件打开失败。';
+$lang['log_file_failed_to_read'] = '读取日志时发生错误。';
