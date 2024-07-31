@@ -90,7 +90,7 @@ mv dokuwiki-plugin-folded-master folded
 wget  https://github.com/g-user/dokuwiki-plugin-subpages/archive/master.zip
 unzip master.zip
 rm master.zip
-mv dokuwiki-plugin-subpages-master subpages
+mv dokuwiki-plugin-subpages-main subpages
 
 wget  https://github.com/g-user/dokuwiki-plugin-stlviewer/archive/master.zip
 unzip master.zip
@@ -101,14 +101,14 @@ mv dokuwiki-plugin-stlviewer-master stlviewer
 wget  https://github.com/g-user/dw-plugin-prettyPhoto/archive/master.zip
 unzip master.zip
 rm master.zip
-mv dw-plugin-prettyPhoto-master prettyPhoto
+mv dw-plugin-prettyPhoto-master prettyphoto
 
 
 
 cd ../..
 rm index.php
 rm install.php
-rm readme-subrepositories.txt
+rm child-repositories.txt
 mkdir data
 cd ..
 chown -R www-data:www-data dwiki-neu
@@ -128,7 +128,7 @@ rm diff.txt
 cat /tmp/conf.txt | while read line; do  
 diff -w dokuwiki/$line  dwiki-neu/$line >> diff.txt 
 done
-#hier sieht man dann, welche Plugins fehlen!!!
+#hier sieht man dann, welche Plugins fehlen!!! - ausser beim Plugin prettyPhoto 
 
 
 cp dokuwiki/conf/local.*  dwiki-neu/conf
@@ -136,6 +136,8 @@ cp dokuwiki/conf/mime.local.conf  dwiki-neu/conf
 cp dokuwiki/conf/acl.auth.php dwiki-neu/conf
 cp dokuwiki/conf/users.auth.php dwiki-neu/conf
 cp dokuwiki/conf/userstyle.css  dwiki-neu/conf
+cp -R dokuwiki/conf/tpl  dwiki-neu/conf
+
 chown -R www-data:www-data  dwiki-neu
 
 

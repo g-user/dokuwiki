@@ -9,7 +9,7 @@ dokuwiki\lib\plugins\folded
 dokuwiki\lib\plugins\indexmenu
 dokuwiki\lib\plugins\move
 dokuwiki\lib\plugins\pdfjs
-dokuwiki\lib\plugins\prettyPhoto
+dokuwiki\lib\plugins\prettyphoto
 dokuwiki\lib\plugins\subpages
 dokuwiki\lib\plugins\stlviewer
 
