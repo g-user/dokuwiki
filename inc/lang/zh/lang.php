@@ -3,6 +3,7 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Zhenzhe Huang <1991419264@qq.com>
  * @author 林晓东 <lin_xd@126.com>
  * @author alair <Mail@alair.top>
  * @author better <betterzhubo@live.com>
@@ -181,6 +182,9 @@ $lang['profdeleted']           = '你的用户已经从这个 wiki 中删除';
 $lang['profconfdelete']        = '我希望删除我的账户。<br/>这项操作无法撤销。';
 $lang['profconfdeletemissing'] = '确认框未勾选';
 $lang['proffail']              = '用户设置没有更新。';
+$lang['proftokenlegend']       = '认证令牌';
+$lang['proftokengenerate']     = '重置令牌';
+$lang['proftokeninfo']         = '认证令牌可用于让第三方应用登录并代表您进行操作。重置令牌将使旧令牌失效，并注销使用先前令牌的所有应用。';
 $lang['pwdforget']             = '忘记密码？立即获取新密码';
 $lang['resendna']              = '本维基不支持二次发送密码。';
 $lang['resendpwd']             = '设置新密码用于';
@@ -196,7 +200,7 @@ $lang['searchmedia_in']        = '在%s中查找';
 $lang['txt_upload']            = '选择要上传的文件:';
 $lang['txt_filename']          = '上传并重命名为（可选）:';
 $lang['txt_overwrt']           = '覆盖已存在的同名文件';
-$lang['maxuploadsize']         = '上传限制。每个文件 %s';
+$lang['maxuploadsize']         = '上传限制：每个文件最大 %s';
 $lang['allowedmime']           = '允许文件扩展名列表';
 $lang['lockedby']              = '目前已被下列人员锁定:';
 $lang['lockexpire']            = '预计锁定解除于:';

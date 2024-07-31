@@ -475,7 +475,7 @@ function getBaseURL($abs = null)
         );
         $dir = dirname('/' . $dir);
     } else {
-        $dir = '.'; //probably wrong
+        $dir = ''; //probably wrong, but we assume it's in the root
     }
 
     $dir = str_replace('\\', '/', $dir);             // bugfix for weird WIN behaviour
@@ -495,7 +495,15 @@ function getBaseURL($abs = null)
 
     //split hostheader into host and port
     if (isset($_SERVER['HTTP_HOST'])) {
-        $parsed_host = parse_url('http://' . $_SERVER['HTTP_HOST']);
+        if (
+            (!empty($conf['trustedproxy'])) && isset($_SERVER['HTTP_X_FORWARDED_HOST'])
+             && preg_match('/' . $conf['trustedproxy'] . '/', $_SERVER['REMOTE_ADDR'])
+        ) {
+            $cur_host = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        } else {
+            $cur_host = $_SERVER['HTTP_HOST'];
+        }
+        $parsed_host = parse_url('http://' . $cur_host);
         $host = $parsed_host['host'] ?? '';
         $port = $parsed_host['port'] ?? '';
     } elseif (isset($_SERVER['SERVER_NAME'])) {
@@ -534,8 +542,14 @@ function getBaseURL($abs = null)
  */
 function is_ssl()
 {
+    global $conf;
+
     // check if we are behind a reverse proxy
-    if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') == 'https') {
+    if (
+        (!empty($conf['trustedproxy'])) && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+         && preg_match('/' . $conf['trustedproxy'] . '/', $_SERVER['REMOTE_ADDR'])
+         && ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+    ) {
         return true;
     }
 

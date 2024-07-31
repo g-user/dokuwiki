@@ -10,13 +10,17 @@
  * @author     Andreas Gohr <andi@splitbrain.org>
  */
 
-use phpseclib\Crypt\AES;
+use dokuwiki\ErrorHandler;
+use dokuwiki\JWT;
 use dokuwiki\Utf8\PhpString;
 use dokuwiki\Extension\AuthPlugin;
 use dokuwiki\Extension\Event;
 use dokuwiki\Extension\PluginController;
 use dokuwiki\PassHash;
 use dokuwiki\Subscriptions\RegistrationSubscriptionSender;
+use phpseclib3\Crypt\AES;
+use phpseclib3\Crypt\Common\SymmetricKey;
+use phpseclib3\Exception\BadDecryptionException;
 
 /**
  * Initialize the auth system.
@@ -91,21 +95,24 @@ function auth_setup()
         $INPUT->set('p', stripctl($INPUT->str('p')));
     }
 
-    $ok = null;
-    if ($auth instanceof AuthPlugin && $auth->canDo('external')) {
-        $ok = $auth->trustExternal($INPUT->str('u'), $INPUT->str('p'), $INPUT->bool('r'));
-    }
+    if (!auth_tokenlogin()) {
+        $ok = null;
 
-    if ($ok === null) {
-        // external trust mechanism not in place, or returns no result,
-        // then attempt auth_login
-        $evdata = [
-            'user'     => $INPUT->str('u'),
-            'password' => $INPUT->str('p'),
-            'sticky'   => $INPUT->bool('r'),
-            'silent'   => $INPUT->bool('http_credentials')
-        ];
-        Event::createAndTrigger('AUTH_LOGIN_CHECK', $evdata, 'auth_login_wrapper');
+        if ($auth instanceof AuthPlugin && $auth->canDo('external')) {
+            $ok = $auth->trustExternal($INPUT->str('u'), $INPUT->str('p'), $INPUT->bool('r'));
+        }
+
+        if ($ok === null) {
+            // external trust mechanism not in place, or returns no result,
+            // then attempt auth_login
+            $evdata = [
+                'user' => $INPUT->str('u'),
+                'password' => $INPUT->str('p'),
+                'sticky' => $INPUT->bool('r'),
+                'silent' => $INPUT->bool('http_credentials')
+            ];
+            Event::createAndTrigger('AUTH_LOGIN_CHECK', $evdata, 'auth_login_wrapper');
+        }
     }
 
     //load ACL into a global array XXX
@@ -163,6 +170,54 @@ function auth_loadACL()
     }
 
     return $out;
+}
+
+/**
+ * Try a token login
+ *
+ * @return bool true if token login succeeded
+ */
+function auth_tokenlogin()
+{
+    global $USERINFO;
+    global $INPUT;
+    /** @var DokuWiki_Auth_Plugin $auth */
+    global $auth;
+    if (!$auth) return false;
+
+    // see if header has token
+    $header = '';
+    if (function_exists('getallheaders')) {
+        // Authorization headers are not in $_SERVER for mod_php
+        $headers = array_change_key_case(getallheaders());
+        if (isset($headers['authorization'])) $header = $headers['authorization'];
+    } else {
+        $header = $INPUT->server->str('HTTP_AUTHORIZATION');
+    }
+    if (!$header) return false;
+    [$type, $token] = sexplode(' ', $header, 2);
+    if ($type !== 'Bearer') return false;
+
+    // check token
+    try {
+        $authtoken = JWT::validate($token);
+    } catch (Exception $e) {
+        msg(hsc($e->getMessage()), -1);
+        return false;
+    }
+
+    // fetch user info from backend
+    $user = $authtoken->getUser();
+    $USERINFO = $auth->getUserData($user);
+    if (!$USERINFO) return false;
+
+    // the code is correct, set up user
+    $INPUT->server->set('REMOTE_USER', $user);
+    $_SESSION[DOKU_COOKIE]['auth']['user'] = $user;
+    $_SESSION[DOKU_COOKIE]['auth']['pass'] = 'nope';
+    $_SESSION[DOKU_COOKIE]['auth']['info'] = $USERINFO;
+
+    return true;
 }
 
 /**
@@ -382,8 +437,9 @@ function auth_random($min, $max)
 function auth_encrypt($data, $secret)
 {
     $iv     = auth_randombytes(16);
-    $cipher = new AES();
-    $cipher->setPassword($secret);
+    $cipher = new AES('cbc');
+    $cipher->setPassword($secret, 'pbkdf2', 'sha1', 'phpseclib');
+    $cipher->setIV($iv);
 
     /*
     this uses the encrypted IV as IV as suggested in
@@ -401,16 +457,21 @@ function auth_encrypt($data, $secret)
  *
  * @param string $ciphertext The encrypted data
  * @param string $secret     The secret/password that shall be used
- * @return string The decrypted data
+ * @return string|null The decrypted data
  */
 function auth_decrypt($ciphertext, $secret)
 {
     $iv     = substr($ciphertext, 0, 16);
-    $cipher = new AES();
-    $cipher->setPassword($secret);
+    $cipher = new AES('cbc');
+    $cipher->setPassword($secret, 'pbkdf2', 'sha1', 'phpseclib');
     $cipher->setIV($iv);
 
-    return $cipher->decrypt(substr($ciphertext, 16));
+    try {
+        return $cipher->decrypt(substr($ciphertext, 16));
+    } catch (BadDecryptionException $e) {
+        ErrorHandler::logException($e);
+        return null;
+    }
 }
 
 /**
