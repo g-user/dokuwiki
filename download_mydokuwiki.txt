@@ -98,6 +98,10 @@ rm master.zip
 mv dokuwiki-plugin-stlviewer-master stlviewer
 
 
+wget  https://github.com/g-user/dw-plugin-prettyPhoto/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dw-plugin-prettyPhoto-master prettyPhoto
 
 
 
