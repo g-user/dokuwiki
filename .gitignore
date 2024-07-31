@@ -23,7 +23,6 @@
 /conf/lang/*
 /conf/plugin_lang/*
 /conf/plugins.local.*
-/conf/tpl/*
 /data/attic/*
 /data/cache/*
 /data/index/*
