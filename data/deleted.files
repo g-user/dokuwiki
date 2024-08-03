@@ -985,4 +985,10 @@ _test/tests/inc/pageutils_resolve_pageid.test.php
 vendor/phpseclib/phpseclib/phpseclib/Net/SCP.php
 vendor/phpseclib/phpseclib/phpseclib/Net/SSH1.php
 vendor/marcusschwarz/lesserphp/README.md
-vendor/marcusschwarz/lesserphp/lessc.inc.php
+vendor/marcusschwarz/lesserphp/lessc.inc.php_cs/DokuWiki/Sniffs/Functions/OpeningFunctionBraceSniff.php
+_cs/DokuWiki/Sniffs/NamingConventions/ConstructorNameSniff.php
+_cs/DokuWiki/Sniffs/PHP/DeprecatedFunctionsSniff.php
+_cs/DokuWiki/Sniffs/PHP/DiscouragedFunctionsSniff.php
+_cs/DokuWiki/Sniffs/WhiteSpace/ScopeIndentSniff.php
+_cs/DokuWiki/ruleset.xml
+_cs/README
