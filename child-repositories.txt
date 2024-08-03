@@ -6,6 +6,7 @@ dokuwiki\lib\plugins\dwedit
 dokuwiki\lib\plugins\fetchmedia
 dokuwiki\lib\plugins\filelisting
 dokuwiki\lib\plugins\folded
+dokuwiki\lib\plugins\htmlok
 dokuwiki\lib\plugins\indexmenu
 dokuwiki\lib\plugins\move
 dokuwiki\lib\plugins\pdfjs

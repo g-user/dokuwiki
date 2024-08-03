@@ -104,6 +104,12 @@ rm master.zip
 mv dw-plugin-prettyPhoto-master prettyphoto
 
 
+wget  https://github.com/g-user/dokuwiki-plugin-htmlok/archive/master.zip
+unzip master.zip
+rm master.zip
+mv dokuwiki-plugin-htmlok-main htmlok
+
+
 
 cd ../..
 rm index.php
