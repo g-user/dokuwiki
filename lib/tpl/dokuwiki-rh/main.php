@@ -74,15 +74,15 @@ $showSidebar = $hasSidebar && ($ACT=='show');
                     <ul>
                         <?php echo (new \dokuwiki\Menu\PageMenu())->getListItems(); ?>
 <!-- !RH! PAGE ACTIONS -->
-                         <?php tpl_toolsevent('usertools', array(
-                                                     'login'     => tpl_action('login', 1, 'li', 1,'<span>', '</span>'),
-                                                     'profile'   => tpl_action('profile', 1, 'li', 1,'<span>', '</span>'),
-                                                     'register'  => tpl_action('register', 1, 'li', 1,'<span>', '</span>'),
-                                                     'admin'     => tpl_action('admin', 1, 'li', 1,'<span>', '</span>'),
-                                                     'recent'    => tpl_action('recent', 1, 'li', 1,'<span>', '</span>'),
-                                                     'media'     => tpl_action('media', 1, 'li', 1,'<span>', '</span> <img src='.tpl_basedir().'images/pagetools/11_mediamanager.png width="35px" height="35px" ')
-     )); ?>
+			<?php echo (new \dokuwiki\Menu\UserMenu())->getListItems(); 
 
+                         $recentItem = new \dokuwiki\Menu\Item\Recent();
+                         echo '<li>' . $recentItem->asHtmlLink() . '</li>';
+        
+		     	 $MediaManagerItem = new \dokuwiki\Menu\Item\Media();
+                         echo '<li>' . $MediaManagerItem->asHtmlLink() . '</li>';
+
+                        ?>
 <!-- !RH! PAGE ACTIONS -->
 
 
