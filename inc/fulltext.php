@@ -95,9 +95,9 @@ function _ft_pageSearch(&$data)
             case 'P-:': // phrase
                 $phrase = substr($token, 3);
                 // since phrases are always parsed as ((W1)(W2)...(P)),
-                // the end($stack) always points the pages that contain
+                // the end($stack) always points at the pages that contain
                 // all words in this phrase
-                $pages  = end($stack);
+                $pages  = $stack ? end($stack) : [];
                 $pages_matched = [];
                 foreach (array_keys($pages) as $id) {
                     $evdata = [
@@ -651,7 +651,11 @@ function ft_resultUnite($args)
     $result = $args[0];
     for ($i = 1; $i !== $array_count; $i++) {
         foreach (array_keys($args[$i]) as $id) {
-            $result[$id] += $args[$i][$id];
+            if (isset($result[$id])) {
+                $result[$id] += $args[$i][$id];
+            } else {
+                $result[$id] = $args[$i][$id];
+            }
         }
     }
     return $result;

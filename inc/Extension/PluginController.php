@@ -107,7 +107,7 @@ class PluginController
             if (!class_exists($class, true)) {
                 # the plugin might be in the wrong directory
                 $inf = confToHash(DOKU_PLUGIN . "$plugin/plugin.info.txt");
-                if ($inf['base'] && $inf['base'] != $plugin) {
+                if (isset($inf['base']) && $inf['base'] != $plugin) {
                     msg(
                         sprintf(
                             "Plugin installed incorrectly. Rename plugin directory '%s' to '%s'.",
@@ -345,7 +345,6 @@ class PluginController
         foreach ($master_list as $plugin) {
             if (file_exists(DOKU_PLUGIN . "$plugin/$type.php")) {
                 $plugins[] = $plugin;
-                continue;
             }
 
             $typedir = DOKU_PLUGIN . "$plugin/$type/";
