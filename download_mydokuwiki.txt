@@ -17,15 +17,6 @@ unzip master.zip
 rm master.zip
 mv dokuwiki-plugin-filelisting-master filelisting
 
-
-wget https://github.com/g-user/dwedit/archive/master.zip
-unzip master.zip
-rm master.zip
-mv dwedit-master dwedit
-
-
-
-
 wget  https://github.com/g-user/dokuwiki-plugin-prosemirror/archive/refs/heads/master.zip
 unzip master.zip
 rm master.zip
@@ -55,11 +46,6 @@ wget https://github.com/g-user/dokuwiki-plugin-move/archive/master.zip
 unzip master.zip
 rm master.zip
 mv dokuwiki-plugin-move-master move
-
-wget https://github.com/g-user/abortlogin/archive/master.zip
-unzip master.zip
-rm master.zip
-mv abortlogin-master abortlogin
 
 wget https://github.com/g-user/dokuwiki-plugin-fetchmedia/archive/master.zip
 unzip master.zip
