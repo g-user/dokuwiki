@@ -94,7 +94,7 @@ class Installer
         if (!$url) {
             throw new Exception('error_nourl', [$extension->getId()]);
         }
-        $this->installFromUrl($url);
+        $this->installFromUrl($url, $extension->getBase());
     }
 
     /**
@@ -127,14 +127,12 @@ class Installer
             throw new Exception('msg_upload_failed', [$_FILES[$field]['error']]);
         }
 
+        $tmpbase = $this->fileToBase($_FILES[$field]['name']) ?: 'upload';
         $tmp = $this->mkTmpDir();
-        if (!move_uploaded_file($_FILES[$field]['tmp_name'], "$tmp/upload.archive")) {
+        if (!move_uploaded_file($_FILES[$field]['tmp_name'], "$tmp/$tmpbase.archive")) {
             throw new Exception('msg_upload_failed', ['move failed']);
         }
-        $this->installFromArchive(
-            "$tmp/upload.archive",
-            $this->fileToBase($_FILES[$field]['name']),
-        );
+        $this->installFromArchive("$tmp/$tmpbase.archive");
     }
 
     /**
@@ -149,8 +147,7 @@ class Installer
      */
     public function installFromArchive($archive, $base = null)
     {
-        if ($base === null) $base = $this->fileToBase($archive);
-        $target = $this->mkTmpDir() . '/' . $base;
+        $target = $this->mkTmpDir() . '/' . ($base ?? $this->fileToBase($archive));
         $this->extractArchive($archive, $target);
         $extensions = $this->findExtensions($target, $base);
         foreach ($extensions as $extension) {
@@ -381,18 +378,20 @@ class Installer
      * Throws an exception if the extension is not compatible
      *
      * @param Extension $extension
+     * @param string $phpVersion the PHP version to check against, the running one by default
      * @throws Exception
      */
-    public static function ensurePhpCompatibility(Extension $extension)
+    public static function ensurePhpCompatibility(Extension $extension, $phpVersion = PHP_VERSION)
     {
         $min = $extension->getMinimumPHPVersion();
-        if ($min && version_compare(PHP_VERSION, $min, '<')) {
-            throw new Exception('error_minphp', [$extension->getId(), $min, PHP_VERSION]);
+        if ($min && version_compare($phpVersion, $min, '<')) {
+            throw new Exception('error_minphp', [$extension->getId(), $min, $phpVersion]);
         }
 
         $max = $extension->getMaximumPHPVersion();
-        if ($max && version_compare(PHP_VERSION, $max, '>')) {
-            throw new Exception('error_maxphp', [$extension->getId(), $max, PHP_VERSION]);
+        // a maximum of "8.5" includes all 8.5.x releases
+        if ($max && version_compare($phpVersion, "$max.99", '>')) {
+            throw new Exception('error_maxphp', [$extension->getId(), $max, $phpVersion]);
         }
     }
 
@@ -433,7 +432,7 @@ class Installer
     protected function fileToBase($file)
     {
         $base = PhpString::basename($file);
-        $base = preg_replace('/\.(tar\.gz|tar\.bz|tar\.bz2|tar|tgz|tbz|zip)$/', '', $base);
+        $base = preg_replace('/\.(tar\.gz|tar\.bz|tar\.bz2|tar|tgz|tbz|zip|archive)$/', '', $base);
         return preg_replace('/\W+/', '', $base);
     }
 
@@ -487,7 +486,6 @@ class Installer
         if (count($files) === 1 && is_dir($files[0])) {
             $dir = $files[0];
         }
-        $base ??= PhpString::basename($dir);
         return [Extension::createFromDirectory($dir, null, $base)];
     }
 
@@ -504,7 +502,7 @@ class Installer
         $magic = fread($fh, 5);
         fclose($fh);
 
-        if (strpos($magic, "\x50\x4b\x03\x04") === 0) {
+        if (str_starts_with($magic, "\x50\x4b\x03\x04")) {
             $archiver = new Zip();
         } else {
             $archiver = new Tar();

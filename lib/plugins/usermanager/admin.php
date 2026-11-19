@@ -2,6 +2,7 @@
 
 use dokuwiki\Extension\AdminPlugin;
 use dokuwiki\Extension\AuthPlugin;
+use dokuwiki\MailUtils;
 use dokuwiki\Utf8\Clean;
 use dokuwiki\Utf8\Conversion;
 
@@ -915,9 +916,9 @@ class admin_plugin_usermanager extends AdminPlugin
         $user[4] = explode(',', $INPUT->str('usergroups'));
         $user[5] = $INPUT->str('userpass2'); // repeated password for confirmation
 
-        $user[4] = array_map('trim', $user[4]);
+        $user[4] = array_map(trim(...), $user[4]);
         if ($clean) {
-            $user[4] = array_map([$auth, 'cleanGroup'], $user[4]);
+            $user[4] = array_map($auth->cleanGroup(...), $user[4]);
         }
         $user[4] = array_filter($user[4]);
         $user[4] = array_unique($user[4]);
@@ -1164,7 +1165,7 @@ class admin_plugin_usermanager extends AdminPlugin
         }
 
         if ($this->auth->canDo('modMail')) {
-            if (empty($mail) || !mail_isvalid($mail)) {
+            if (empty($mail) || !MailUtils::isValid($mail)) {
                 $error = $this->lang['import_error_badmail'];
                 return false;
             }

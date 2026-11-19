@@ -10,7 +10,7 @@ use dokuwiki\TreeBuilder\Node\Top;
 /**
  * Abstract class to generate a tree
  */
-abstract class AbstractBuilder
+abstract class AbstractBuilder implements \Stringable
 {
     protected bool $generated = false;
 
@@ -251,8 +251,6 @@ abstract class AbstractBuilder
 
     /**
      * "prints" the tree
-     *
-     * @return array
      */
     public function __toString(): string
     {

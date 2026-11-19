@@ -18,7 +18,10 @@ function act_dispatch()
     // always initialize on first dispatch (test request may dispatch mutliple times on one request)
     $router = ActionRouter::getInstance(true);
 
-    $headers = ['Content-Type: text/html; charset=utf-8'];
+    $headers = [
+        'Content-Type: text/html; charset=utf-8',
+        'Referrer-Policy: strict-origin-when-cross-origin',
+    ];
     Event::createAndTrigger('ACTION_HEADERS_SEND', $headers, 'act_sendheaders');
 
     // clear internal variables
@@ -67,6 +70,6 @@ function act_clean($act)
     if ($act == 'export_html') $act = 'export_xhtml';
     if ($act == 'export_htmlbody') $act = 'export_xhtmlbody';
 
-    if ($act === '') $act = 'show';
+    if ($act === '') return 'show';
     return $act;
 }

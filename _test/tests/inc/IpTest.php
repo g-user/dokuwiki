@@ -19,9 +19,26 @@ class IpTest extends \DokuWikiTest {
             ['::127.0.0.1', 6, 0x00000000, 0x7f000001],
             ['::1', 6, 0x00000000, 0x00000001],
             ['38AF:3033:AA39:CDE3:1A46:094C:44ED:5300', 6, 0x38AF3033AA39CDE3, 0x1A46094C44ED5300],
+            ['0000:0000:0000:0000:0000:0000:0000:0000', 6, 0, 0],
             ['193.53.125.7', 4, 0x00000000, 0xC1357D07],
+            // NOTE: wrap around! 0xFFFFFFFFFFFFFFFE seen as -2
+            ['7FFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFE', 6, 0x7FFFFFFFFFFFFFFF, -2],
         ];
 
+        // float loses percision and give confusing test results!
+        // sprintf("%.0f",0x7FFFFFFFFFFFFFFF) == sprintf("%.0f",0x7FFFFFFFFFFFFF00)
+        // using string of decimal values instead
+        if(PHP_INT_SIZE == 4) {
+            $tests = [
+                ['127.0.0.1', 4, '0', '2130706433'],
+                ['::127.0.0.1', 6, '0','2130706433'],
+                ['::1', 6, '0', '1'],
+                ['0000:0000:0000:0000:0000:0000:0000:0000', 6, '0', '0'],
+                ['193.53.125.7', 4, '0', '3241508103'],
+                ['7FFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFE', 6, '9223372036854775807', '18446744073709551614'],
+                ['38AF:3033:AA39:CDE3:1A46:094C:44ED:5300', 6, '4084536385505709539', '1893210916534440704']
+            ];
+        }
         return $tests;
     }
 
@@ -36,10 +53,19 @@ class IpTest extends \DokuWikiTest {
      * @param int    $lower   The lower 64 bits of the IP.
      *
      * @return void
+     *
+     * Note: $upper and $lower are likley 'float' instead of 'int' for large values.
+     * The more accurate hint 'int|float' is not supported in php7.4.
      */
-    public function test_ip_to_number(string $ip, int $version, int $upper, int $lower): void
+    public function test_ip_to_number(string $ip, int $version, $upper, $lower): void
     {
         $result = Ip::ipToNumber($ip);
+
+        // force output of ipv4 to string for easy compare
+        if(PHP_INT_SIZE == 4 and !is_string($result['upper']) ) {
+            $result['upper'] = sprintf("%.0f", $result['upper']);
+            $result['lower'] = sprintf("%.0f", $result['lower']);
+        }
 
         $this->assertSame($version, $result['version']);
         $this->assertSame($upper, $result['upper']);
@@ -99,6 +125,41 @@ class IpTest extends \DokuWikiTest {
     }
 
     /**
+     * The data provider for test_ip_in_range_invalid_mask().
+     *
+     * @return string[][] Returns an array of [ip, range] with an invalid mask.
+     */
+    public function ip_in_range_invalid_mask_provider(): array
+    {
+        return [
+            // Non-numeric mask: would throw a TypeError on the "+= 96" IPv4 path.
+            ['127.0.0.1', '10.0.0.0/abc'],
+            // Empty mask.
+            ['127.0.0.1', '10.0.0.0/'],
+            // Negative mask: would pass the "> 128" check and match every IPv4.
+            ['1.2.3.4', '10.0.0.0/-1'],
+            ['1.2.3.4', '10.0.0.0/-5'],
+        ];
+    }
+
+    /**
+     * Test that ipInRange() rejects an invalid mask with an Exception rather
+     * than a TypeError or an over-broad match.
+     *
+     * @dataProvider ip_in_range_invalid_mask_provider
+     *
+     * @param string $ip    The IP to test.
+     * @param string $range The IP range with the invalid mask.
+     *
+     * @return void
+     */
+    public function test_ip_in_range_invalid_mask(string $ip, string $range): void
+    {
+        $this->expectException(\Exception::class);
+        Ip::ipInRange($ip, $range);
+    }
+
+    /**
      * Data provider for test_ip_matches().
      *
      * @return mixed[][] Returns an array of test cases.
@@ -121,8 +182,17 @@ class IpTest extends \DokuWikiTest {
             ['::ffff:127.0.0.1', '::0:ffff:127.0.0.1', true],
         ];
 
+        // Invalid masks must degrade to "no match" instead of a fatal error
+        // (non-numeric mask) or an over-broad match (negative mask).
+        $invalidMaskTests = [
+            ['127.0.0.1', '10.0.0.0/abc', false],
+            ['127.0.0.1', '10.0.0.0/', false],
+            ['1.2.3.4', '10.0.0.0/-1', false],
+            ['1.2.3.4', '10.0.0.0/-5', false],
+        ];
 
-        return array_merge($rangeTests, $exactTests);
+
+        return array_merge($rangeTests, $exactTests, $invalidMaskTests);
     }
 
     /**
@@ -431,6 +501,50 @@ class IpTest extends \DokuWikiTest {
         $INPUT->server->set('SERVER_NAME', $serverName);
 
         $result = Ip::hostName();
+
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test custom client IP header configuration.
+     */
+    public function client_ip_provider(): array
+    {
+        return [
+            // client_ip_header disabled, X-Real-IP present -> use REMOTE_ADDR
+            [null, ['HTTP_X_REAL_IP' => '5.6.7.8', 'REMOTE_ADDR' => '1.2.3.4'], '1.2.3.4'],
+
+            // client_ip_header set to X_REAL_IP, X-Real-IP present -> use X-Real-IP
+            ['X_REAL_IP', ['HTTP_X_REAL_IP' => '5.6.7.8', 'REMOTE_ADDR' => '1.2.3.4'], '5.6.7.8'],
+
+            // custom client_ip_header set to CF_CONNECTING_IP -> use CF header
+            ['CF_CONNECTING_IP', ['HTTP_CF_CONNECTING_IP' => '5.6.7.8', 'REMOTE_ADDR' => '1.2.3.4'], '5.6.7.8'],
+
+            // client_ip_header set to X_REAL_IP but only CF header present -> fallback to REMOTE_ADDR
+            ['X_REAL_IP', ['HTTP_CF_CONNECTING_IP' => '5.6.7.8', 'REMOTE_ADDR' => '1.2.3.4'], '1.2.3.4'],
+        ];
+    }
+
+    /**
+     * @dataProvider client_ip_provider
+     */
+    public function test_client_ip($client_ip_header, array $server, string $expected): void
+    {
+        /* @var Input $INPUT */
+        global $INPUT, $conf;
+
+        if ($client_ip_header !== null) {
+            $conf['client_ip_header'] = $client_ip_header;
+        } else {
+            unset($conf['client_ip_header']);
+        }
+
+        // Set provided header variables
+        foreach ($server as $key => $value) {
+            $INPUT->server->set($key, $value);
+        }
+
+        $result = Ip::clientIp();
 
         $this->assertSame($expected, $result);
     }

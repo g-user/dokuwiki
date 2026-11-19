@@ -104,7 +104,7 @@ function getID($param = 'id', $clean = true)
         }
     }
     if ($clean) $id = cleanID($id);
-    if ($id === '' && $param == 'id') $id = $conf['start'];
+    if ($id === '' && $param == 'id') return $conf['start'];
 
     return $id;
 }
@@ -197,9 +197,8 @@ function noNS($id)
     $pos = strrpos($id, ':');
     if ($pos !== false) {
         return substr($id, $pos + 1);
-    } else {
-        return $id;
     }
+    return $id;
 }
 
 /**
@@ -228,7 +227,7 @@ function noNSorNS($id)
     global $conf;
 
     $p = noNS($id);
-    if ($p === $conf['start'] || $p === false || $p === '') {
+    if (in_array($p, [$conf['start'], false, ''], true)) {
         $p = curNS($id);
         if ($p === false || $p === '') {
             return $conf['start'];
@@ -264,9 +263,8 @@ function sectionID($title, &$check)
         }
         $check [] = $candidateTitle;
         return $candidateTitle;
-    } else {
-        return $title;
     }
+    return $title;
 }
 
 /**
@@ -337,6 +335,7 @@ function wikiFN($raw_id, $rev = '', $clean = true)
     $cache = & $cache_wikifn;
 
     $id = $raw_id;
+    $rev = (int) $rev; // any falsy rev will be rev 0 in the cache
 
     if ($clean) $id = cleanID($id);
     $id = str_replace(':', '/', $id);
@@ -459,13 +458,11 @@ function mediaFN($id, $rev = '', $clean = true)
     if ($clean) $id = cleanID($id);
     $id = str_replace(':', '/', $id);
     if (empty($rev)) {
-        $fn = $conf['mediadir'] . '/' . utf8_encodeFN($id);
-    } else {
-        $ext = mimetype($id);
-        $name = substr($id, 0, -1 * strlen($ext[0]) - 1);
-        $fn = $conf['mediaolddir'] . '/' . utf8_encodeFN($name . '.' . ( (int) $rev ) . '.' . $ext[0]);
+        return $conf['mediadir'] . '/' . utf8_encodeFN($id);
     }
-    return $fn;
+    $ext = mimetype($id);
+    $name = substr($id, 0, -1 * strlen($ext[0]) - 1);
+    return $conf['mediaolddir'] . '/' . utf8_encodeFN($name . '.' . ( (int) $rev ) . '.' . $ext[0]);
 }
 
 /**
@@ -540,12 +537,12 @@ function resolve_id($ns, $id, $clean = true)
         }
         if (!end($pathA)) $result[] = '';
         $id = implode(':', $result);
-    } elseif ($ns !== false && strpos($id, ':') === false) {
+    } elseif ($ns !== false && !str_contains($id, ':')) {
         //if link contains no namespace. add current namespace (if any)
         $id = $ns . ':' . $id;
     }
 
-    if ($clean) $id = cleanID($id);
+    if ($clean) return cleanID($id);
     return $id;
 }
 

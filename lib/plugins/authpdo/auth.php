@@ -142,10 +142,9 @@ class auth_plugin_authpdo extends AuthPlugin
             // hashed password
             $passhash = new PassHash();
             return $passhash->verify_hash($pass, $userdata['hash']);
-        } else {
-            // clear text password in the database O_o
-            return ($pass === $userdata['clear']);
         }
+        // clear text password in the database O_o
+        return ($pass === $userdata['clear']);
     }
 
     /**
@@ -164,6 +163,8 @@ class auth_plugin_authpdo extends AuthPlugin
      */
     public function getUserData($user, $requireGroups = true)
     {
+        if (!is_string($user) && !is_int($user)) return false;
+        $user = (string) $user;
         $data = $this->selectUser($user);
         if ($data == false) return false;
 
@@ -458,9 +459,8 @@ class auth_plugin_authpdo extends AuthPlugin
 
         if (!$limit) {
             return array_splice($groups, $start);
-        } else {
-            return array_splice($groups, $start, $limit);
         }
+        return array_splice($groups, $start, $limit);
     }
 
     /**
@@ -666,7 +666,7 @@ class auth_plugin_authpdo extends AuthPlugin
                 if (is_array($value)) continue;
                 if (is_object($value)) continue;
                 if ($key[0] != ':') $key = ":$key"; // prefix with colon if needed
-                if (strpos($sql, (string) $key) === false) continue; // skip if parameter is missing
+                if (!str_contains($sql, (string) $key)) continue; // skip if parameter is missing
 
                 if (is_int($value)) {
                     $sth->bindValue($key, $value, PDO::PARAM_INT);
@@ -692,7 +692,7 @@ class auth_plugin_authpdo extends AuthPlugin
                 }
                 try {
                     $hasnextrowset = $sth->nextRowset(); // run next rowset
-                } catch (PDOException $rowset_e) {
+                } catch (PDOException) {
                     $hasnextrowset = false; // driver does not support multi-rowset, should be executed in one time
                 }
             }
@@ -753,7 +753,7 @@ class auth_plugin_authpdo extends AuthPlugin
             if (!$sql) return false;
             // check if needed params are there
             foreach ($params as $param) {
-                if (strpos($sql, ":$param") === false) return false;
+                if (!str_contains($sql, ":$param")) return false;
             }
         }
 
@@ -782,7 +782,7 @@ class auth_plugin_authpdo extends AuthPlugin
             }
             $sql = str_replace($key, $val, $sql);
         }
-        if ($htmlescape) $sql = hsc($sql);
+        if ($htmlescape) return hsc($sql);
         return $sql;
     }
 }

@@ -21,6 +21,15 @@ class ImageMagickAdapter extends Adapter
         }
 
         $this->args[] = $this->options['imconvert'];
+
+        // limits only apply to what follows them, so they have to precede the input file
+        foreach ((array)$this->options['imlimits'] as $limit => $value) {
+            if ($value === null) continue;
+            $this->args[] = '-limit';
+            $this->args[] = $limit;
+            $this->args[] = $value;
+        }
+
         $this->args[] = $imagepath;
     }
 
@@ -60,7 +69,7 @@ class ImageMagickAdapter extends Adapter
      * @inheritDoc
      * @throws Exception
      */
-    public function resize($width, $height)
+    public function resize($width, $height, $upscale = true)
     {
         if ($width == 0 && $height == 0) {
             throw new Exception('You can not resize to 0x0');
@@ -69,6 +78,7 @@ class ImageMagickAdapter extends Adapter
         if ($height == 0) $height = '';
 
         $size = $width . 'x' . $height;
+        if (!$upscale) $size .= '>';
 
         $this->args[] = '-resize';
         $this->args[] = $size;
@@ -79,8 +89,10 @@ class ImageMagickAdapter extends Adapter
      * @inheritDoc
      * @throws Exception
      */
-    public function crop($width, $height)
+    public function crop($width, $height, $upscale = true)
     {
+        $width = (int)$width;
+        $height = (int)$height;
         if ($width == 0 && $height == 0) {
             throw new Exception('You can not crop to 0x0');
         }
@@ -91,7 +103,7 @@ class ImageMagickAdapter extends Adapter
         $size = $width . 'x' . $height;
 
         $this->args[] = '-resize';
-        $this->args[] = "$size^";
+        $this->args[] = $upscale ? "$size^" : "$size^>";
         $this->args[] = '-gravity';
         $this->args[] = 'center';
         $this->args[] = '-crop';
@@ -121,10 +133,16 @@ class ImageMagickAdapter extends Adapter
         $cmd = join(' ', $args);
         $output = [];
         $return = 0;
-        exec($cmd, $output, $return);
+        // ImageMagick reports on STDERR, capture that instead of passing it through
+        exec($cmd . ' 2>&1', $output, $return);
 
         if ($return !== 0) {
-            throw new Exception('ImageMagick returned non-zero exit code for ' . $cmd);
+            // warnings are not the reason for the failure and would only add noise
+            $output = preg_grep('/^(WARNING:|\s*$)/', $output, PREG_GREP_INVERT);
+
+            throw new Exception(
+                'ImageMagick returned non-zero exit code for ' . $cmd . "\n" . join("\n", $output)
+            );
         }
     }
 }

@@ -80,7 +80,7 @@ class Setting
         if ($this->isProtected()) return false;
         $input = $this->cleanValue($input);
 
-        $value = is_null($this->local) ? $this->default : $this->local;
+        $value = $this->local ?? $this->default;
         if ($value == $input) return false;
 
         // validate new value
@@ -146,9 +146,8 @@ class Setting
             if ($out == 'start') {
                 // exception, because this config name is clashing with our actual start page
                 return '<a href="https://www.dokuwiki.org/config:startpage">' . $out . '</a>';
-            } else {
-                return '<a href="https://www.dokuwiki.org/config:' . $out . '">' . $out . '</a>';
             }
+            return '<a href="https://www.dokuwiki.org/config:' . $out . '">' . $out . '</a>';
         }
         return $out;
     }
@@ -180,11 +179,11 @@ class Setting
     {
         if (str_starts_with($this->getKey(), 'plugin' . Configuration::KEYMARKER)) {
             return 'plugin';
-        } elseif (str_starts_with($this->getKey(), 'tpl' . Configuration::KEYMARKER)) {
-            return 'template';
-        } else {
-            return 'dokuwiki';
         }
+        if (str_starts_with($this->getKey(), 'tpl' . Configuration::KEYMARKER)) {
+            return 'template';
+        }
+        return 'dokuwiki';
     }
 
     /**
@@ -204,7 +203,7 @@ class Setting
         } elseif ($echo && $this->error) {
             $value = $this->input;
         } else {
-            $value = is_null($this->local) ? $this->default : $this->local;
+            $value = $this->local ?? $this->default;
         }
 
         $key = htmlspecialchars($this->key);
@@ -255,7 +254,7 @@ class Setting
         if ($fmt != 'php') return '';
 
         if (is_array($this->local)) {
-            $value = 'array(' . implode(', ', array_map([$this, 'escape'], $this->local)) . ')';
+            $value = 'array(' . implode(', ', array_map($this->escape(...), $this->local)) . ')';
         } else {
             $value = $this->escape($this->local);
         }
@@ -274,7 +273,7 @@ class Setting
     public function prompt(\admin_plugin_config $plugin)
     {
         $prompt = $plugin->getLang($this->key);
-        if (!$prompt) $prompt = htmlspecialchars(str_replace(['____', '_'], ' ', $this->key));
+        if (!$prompt) return htmlspecialchars(str_replace(['____', '_'], ' ', $this->key));
         return $prompt;
     }
 

@@ -388,6 +388,22 @@ abstract class Doku_Renderer extends Plugin
     }
 
     /**
+     * Open an ordered list with a non-default starting number
+     *
+     * Sibling of listo_open for ordered lists whose first item is numbered
+     * other than 1 (e.g. GFM "5. foo" -> start at 5). The default delegates
+     * to listo_open so renderers that don't care about the starting number
+     * still produce a valid list. Renderers that DO care (xhtml emits
+     * start="N") override this method.
+     *
+     * @param int $start Starting number for the list
+     */
+    public function listo_open_start($start = 1)
+    {
+        $this->listo_open();
+    }
+
+    /**
      * Close an ordered list
      */
     public function listo_close()
@@ -872,10 +888,9 @@ abstract class Doku_Renderer extends Plugin
     {
         if ($create) {
             return sectionID($title, $this->headers);
-        } else {
-            $check = false;
-            return sectionID($title, $check);
         }
+        $check = false;
+        return sectionID($title, $check);
     }
 
     /**
@@ -972,7 +987,7 @@ abstract class Doku_Renderer extends Plugin
         if ($url && $url[0] === ':') {
             $urlparam = '';
             $id = $url;
-            if (strpos($url, '?') !== false) {
+            if (str_contains($url, '?')) {
                 [$id, $urlparam] = sexplode('?', $url, 2, '');
             }
             $url = wl(cleanID($id), $urlparam);

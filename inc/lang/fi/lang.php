@@ -3,6 +3,7 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Tommi Nieminen <translator@legisign.org>
  * @author Pasi <zazuu@zazuu.net>
  * @author Tuomo Hartikainen <tuomo.hartikainen@heksia.fi>
  * @author Petteri <petteri@gmail.com>
@@ -74,6 +75,8 @@ $lang['minoredit']             = 'Pieni muutos';
 $lang['draftdate']             = 'Luonnos tallennettu automaattisesti';
 $lang['nosecedit']             = 'Sivu on muuttunut välillä ja kappaleen tiedot olivat vanhentuneet. Koko sivu ladattu.';
 $lang['searchcreatepage']      = 'Jos et löytänyt etsimääsi, voit luoda tai muokata sivua %s, joka on nimetty kyselysi mukaan.';
+$lang['search_fullresults']    = 'Kokotekstitulokset';
+$lang['js']['search_toggle_tools'] = 'Näytä tai piilota hakutyökalut';
 $lang['js']['willexpire']      = 'Lukituksesi tämän sivun muokkaukseen päättyy minuutin kuluttua.\nRistiriitojen välttämiseksi paina esikatselu-nappia nollataksesi lukitusajan.';
 $lang['js']['notsavedyet']     = 'Dokumentissa on tallentamattomia muutoksia, jotka häviävät.
  Haluatko varmasti jatkaa?';
@@ -117,6 +120,20 @@ $lang['js']['media_done_btn']  = 'Valmis';
 $lang['js']['media_drop']      = 'Pudota lähetettävät tiedostot tähän';
 $lang['js']['media_cancel']    = 'Poista';
 $lang['js']['media_overwrt']   = 'Ylikirjoita olemassa olevat tiedostot';
+$lang['js']['data_insecure']   = 'VAROITUS: datakansio ei näytä täysin turvalliselta. Lue lisää <a href="https://www.dokuwiki.org/security#web_access_security">verkkokäytön tietoturvasta DokuWikissa</a>.';
+$lang['js']['size_wrap']       = 'Vaihda rivityksen tilaa';
+$lang['js']['clipboard_button'] = 'Kopioi';
+$lang['js']['clipboard_success'] = 'Kopioitu!';
+$lang['js']['clipboard_error'] = 'Kopiointi epäonnistui';
+$lang['search_exact_match']    = 'Tarkka osuma';
+$lang['search_starts_with']    = 'Alkaa';
+$lang['search_ends_with']      = 'Päättyy';
+$lang['search_contains']       = 'Sisältää';
+$lang['search_any_ns']         = 'Mikä tahansa nimiavaruus';
+$lang['search_any_time']       = 'Milloin tahansa';
+$lang['search_past_7_days']    = 'Viime viikolla';
+$lang['search_past_month']     = 'Viime kuussa';
+$lang['search_past_year']      = 'Viime vuonna';
 $lang['regmissing']            = 'Kaikki kentät tulee täyttää.';
 $lang['reguexists']            = 'Käyttäjä tällä käyttäjänimellä on jo olemassa.';
 $lang['regsuccess']            = 'Käyttäjä luotiin ja salasana lähetettiin sähköpostilla.';
@@ -136,6 +153,7 @@ $lang['profdeleteuser']        = 'Poista tili';
 $lang['profdeleted']           = 'Käyttäjätilisi on postettu tästä wikistä';
 $lang['profconfdelete']        = 'Haluan poistaa käyttäjätilini tästä wikistä. <br/> Tätä toimintoa ei voi myöhemmin peruuttaa.';
 $lang['profconfdeletemissing'] = 'Vahvistus rastia ei valittu';
+$lang['proftokenlegend']       = 'Todennusmerkki';
 $lang['pwdforget']             = 'Unohtuiko salasana? Hanki uusi';
 $lang['resendna']              = 'Tämä wiki ei tue salasanan uudelleenlähettämistä.';
 $lang['resendpwd']             = 'Aseta uusisalasana';
@@ -152,6 +170,7 @@ $lang['txt_upload']            = 'Valitse tiedosto lähetettäväksi:';
 $lang['txt_filename']          = 'Lähetä nimellä (valinnainen):';
 $lang['txt_overwrt']           = 'Ylikirjoita olemassa oleva';
 $lang['maxuploadsize']         = 'Palvelimelle siirto max. %s / tiedosto.';
+$lang['allowedmime']           = 'Sallittujen päätteiden luettelo';
 $lang['lockedby']              = 'Tällä hetkellä tiedoston on lukinnut:';
 $lang['lockexpire']            = 'Lukitus päättyy:';
 $lang['rssfailed']             = 'Virhe tapahtui noudettaessa tätä syötettä: ';
@@ -203,6 +222,7 @@ $lang['created']               = 'luotu';
 $lang['restored']              = 'vanha versio palautettu (%s)';
 $lang['external_edit']         = 'ulkoinen muokkaus';
 $lang['summary']               = 'Yhteenveto muokkauksesta';
+$lang['unknowndate']           = 'Tuntematon päiväys';
 $lang['noflash']               = 'Tarvitset <a href="http://get.adobe.com/flashplayer">Adobe Flash-liitännäisen</a> nähdäksesi tämän sisällön.';
 $lang['download']              = 'Lataa palanen';
 $lang['tools']                 = 'Työkalut';
@@ -286,7 +306,6 @@ $lang['i_problems']            = 'Asennusohjelma löysi alla listattuja ongelmia
 $lang['i_modified']            = 'Turvallisuussyistä tämä ohjelma toimii vain uusien ja muokkaamattomien Dokuwiki-asennusten kanssa. Pura tiedostot uudestaan asennuspaketista, tai lue <a href="https://www.dokuwiki.org/install">Dokuwikin asennusohje (englanniksi)</a>';
 $lang['i_funcna']              = 'PHP:n funktio <code>%s</code> ei ole käytettävissä. Palveluntarjoajasi on saattanut poistaa sen jostain syystä.';
 $lang['i_phpver']              = 'Käyttämäsi PHP-ohjelmiston versio <code>%s</code> on pienempi, kuin tarvitaan <code>%s</code>. PHP-asennuksesi pitää päivittää.';
-$lang['i_mbfuncoverload']      = 'mbstring.func_overload pitää ottaa pois käytöstä php.ini -tiedostosta käyttääksesi DokuWikiä';
 $lang['i_permfail']            = '<code>%s</code> ei ole DokuWikin kirjoitettavissa. Muokkaa hakemiston oikeuksia!';
 $lang['i_confexists']          = '<code>%s</code> on jo olemassa';
 $lang['i_writeerr']            = '<code>%s</code>n luonti epäonnistui. Tarkista hakemiston/tiedoston oikeudet ja luo tiedosto käsin.';

@@ -14,6 +14,8 @@ use dokuwiki\Action\Locked;
 use dokuwiki\ChangeLog\PageChangeLog;
 use dokuwiki\Extension\AuthPlugin;
 use dokuwiki\Extension\Event;
+use dokuwiki\Search\FulltextSearch;
+use dokuwiki\Utf8;
 use dokuwiki\Ui\Backlinks;
 use dokuwiki\Ui\Editor;
 use dokuwiki\Ui\Index;
@@ -99,7 +101,7 @@ function html_secedit($text, $show = true)
 
     return preg_replace_callback(
         SEC_EDIT_PATTERN,
-        'html_secedit_button',
+        html_secedit_button(...),
         $text
     );
 }
@@ -120,7 +122,7 @@ function html_secedit_button($matches)
 
     try {
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-    } catch (JsonException $e) {
+    } catch (JsonException) {
         return '';
     }
     $data['target'] = strtolower($data['target']);
@@ -295,9 +297,10 @@ function html_draft()
  */
 function html_hilight($html, $phrases)
 {
+    $FulltextSearch = new FulltextSearch();
     $phrases = (array) $phrases;
-    $phrases = array_map('preg_quote_cb', $phrases);
-    $phrases = array_map('ft_snippet_re_preprocess', $phrases);
+    $phrases = array_map(preg_quote_cb(...), $phrases);
+    $phrases = array_map($FulltextSearch->snippetRePreprocess(...), $phrases);
     $phrases = array_filter($phrases);
 
     $regex = implode('|', $phrases);
@@ -308,7 +311,7 @@ function html_hilight($html, $phrases)
     return @preg_replace_callback("/((<[^>]*)|$regex)/ui", function ($match) {
         $hlight = unslash($match[0]);
         if (!isset($match[2])) {
-            $hlight = '<span class="search_hit">' . $hlight . '</span>';
+            return '<span class="search_hit">' . $hlight . '</span>';
         }
         return $hlight;
     }, $html);
@@ -510,7 +513,7 @@ function html_buildlist($data, $class, $func, $lifunc = null, $forcewrapper = fa
     if ($forcewrapper || $start_level < 2) {
         // Trigger building a wrapper ul if the first level is
         // 0 (we have a root object) or 1 (just the root content)
-        $html = "\n" . '<ul class="' . $class . '">' . "\n" . $html . '</ul>' . "\n";
+        return "\n" . '<ul class="' . $class . '">' . "\n" . $html . '</ul>' . "\n";
     }
 
     return $html;
@@ -1060,10 +1063,10 @@ function html_sizechange($sizechange, $form = null)
         }
         if (!isset($form)) {
             return '<span class="' . $class . '">' . $value . '</span>';
-        } else { // Doku_Form
-            $form->addElement(form_makeOpenTag('span', ['class' => $class]));
-            $form->addElement($value);
-            $form->addElement(form_makeCloseTag('span'));
         }
+        // Doku_Form
+        $form->addElement(form_makeOpenTag('span', ['class' => $class]));
+        $form->addElement($value);
+        $form->addElement(form_makeCloseTag('span'));
     }
 }

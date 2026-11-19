@@ -3,6 +3,8 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Paolo Supino <paolo@supino.org>
+ * @author Claudio Tam <claudio.tamburrino1@gmail.com>
  * @author Roberto Bellingeri <bellingeri@netguru.it>
  * @author Simone Perin <simoneperin.92@libero.it>
  * @author Dario <darioriso@virgilio.it>
@@ -55,6 +57,11 @@ $lang['title']                 = 'Titolo del wiki';
 $lang['start']                 = 'Nome della pagina iniziale';
 $lang['lang']                  = 'Lingua';
 $lang['template']              = 'Modello';
+$lang['syntax']                = 'Variante della sintassi wiki';
+$lang['syntax_o_dw']           = 'Solo Dokuwiki';
+$lang['syntax_o_md']           = 'solo Markdown';
+$lang['syntax_o_dw+md']        = 'Entrambi (preferenza a Dokuwiki';
+$lang['syntax_o_md+dw']        = 'Entrambi (preferenza a Markdown)';
 $lang['tagline']               = 'Tagline (se il template lo supporta)';
 $lang['sidebar']               = 'Nome pagina in barra laterale (se il template lo supporta), il campo vuoto disabilita la barra laterale';
 $lang['license']               = 'Sotto quale licenza vorresti rilasciare il tuo contenuto?';
@@ -101,6 +108,7 @@ $lang['disableactions_other']  = 'Altre azioni (separate da virgola)';
 $lang['disableactions_rss']    = 'XML Syndication (RSS)';
 $lang['auth_security_timeout'] = 'Tempo di sicurezza per l\'autenticazione (secondi)';
 $lang['securecookie']          = 'Devono i cookies impostati tramite HTTPS essere inviati al browser solo tramite HTTPS? Disattiva questa opzione solo quando l\'accesso al tuo wiki viene effettuato con il protocollo SSL ma la navigazione del wiki non risulta sicura.';
+$lang['samesitecookie']        = 'Attributo SameSite da usare nei cookie. Se lo lasci vuoto, sarà il browser a scegliere automaticamente la policy SameSite.';
 $lang['remote']                = 'Abilita il sistema di API remoto. Questo permette ad altre applicazioni di accedere al wiki tramite XML-RPC o altri meccanismi.';
 $lang['remoteuser']            = 'Restringi l\'accesso dell\'aPI remota ai gruppi o utenti qui specificati separati da virgola. Lascia vuoto per dare accesso a chiunque.';
 $lang['remotecors']            = 'Abilitare la condivisione delle risorse tra origini (CORS) per le interfacce remote. Asterisco (*) per consentire tutte le origini. Lasciare vuoto per negare CORS.';
@@ -173,7 +181,6 @@ $lang['hidewarnings']          = 'Non visualizzare alcun avviso emesso da PHP. Q
 $lang['dnslookups']            = 'Dokuwiki farà il lookup dei nomi host per ricavare l\'indirizzo IP remoto degli utenti che modificano le pagine. Se hai un DNS lento o non funzionante o se non vuoi questa funzione, disabilita l\'opzione';
 $lang['jquerycdn']             = 'Vuoi che gli script jQuery e jQuery UI siano caricati da una CDN? Questo richiederà richieste HTTP aggiuntive ma i file potrebbero caricarsi più velocemente e gli utenti potrebbero averli già in cache.';
 $lang['trustedproxies']        = 'Elenco separato da virgole di server proxy attendibili da cui leggere l\'intestazione X-Forwarded-For. Ogni elemento nell\'array può essere un indirizzo IPv4 o IPv6, oppure un intervallo CIDR IPv4 o IPv6 (ad esempio 10.0.0.0/8). Lasciare vuoto per non considerare attendibile alcun proxy.';
-$lang['realip']                = 'Considera attendibile l\'intestazione X-Real-IP. Abilita questa opzione solo se il tuo server scrive questa intestazione, altrimenti potrebbe essere falsificata.';
 $lang['jquerycdn_o_0']         = 'Nessuna CDN, solo consegna locale';
 $lang['jquerycdn_o_jquery']    = 'CDN presso code.jquery.com';
 $lang['jquerycdn_o_cdnjs']     = 'CDN presso cdnjs.com';

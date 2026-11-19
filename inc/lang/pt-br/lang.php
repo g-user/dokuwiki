@@ -3,10 +3,11 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Hugo Gualandi <hugomg@ic.ufrj.br>
+ * @author Eduardo Mozart de Oliveira <eduardomozart182@gmail.com>
  * @author Thalles Lázaro <thallesprofissional@gmail.com>
  * @author Daniel Dias Rodrigues <danieldiasr@gmail.com>
  * @author Paul Nizan <paul_nizan@hormail.com>
- * @author Eduardo Mozart de Oliveira <eduardomozart182@gmail.com>
  * @author ANDRE BASSANI DE FREITAS <dedebf@gmail.com>
  * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  * @author Davi Jorge <davimoises2015@hotmail.com>
@@ -140,6 +141,12 @@ $lang['js']['media_drop']      = 'Arraste os arquivos até aqui para enviar';
 $lang['js']['media_cancel']    = 'remover';
 $lang['js']['media_overwrt']   = 'Sobrescrever arquivos existentes';
 $lang['js']['data_insecure']   = 'AVISO: Parece que seu diretório data não está corretamente seguro. Por favor, leia sobre <a href="https://www.dokuwiki.org/security#web_access_security">Web Access Security in DokuWiki</a>.';
+$lang['js']['size_larger']     = 'Aumentar o tamanho do campo de entrada';
+$lang['js']['size_smaller']    = 'Reduzir o tamanho do campo de entrada';
+$lang['js']['size_wrap']       = 'Alternar quebra de linha';
+$lang['js']['clipboard_button'] = 'Copiar';
+$lang['js']['clipboard_success'] = 'Copiado!';
+$lang['js']['clipboard_error'] = 'Cópia falhou';
 $lang['search_exact_match']    = 'Correspondência exata';
 $lang['search_starts_with']    = 'Começa com';
 $lang['search_ends_with']      = 'Termina com';
@@ -332,7 +339,6 @@ $lang['i_funcna']              = 'A função PHP <code>%s</code> não está disp
 $lang['i_disabled']            = 'Foi desativado pelo seu provedor.';
 $lang['i_funcnmail']           = '<b>Nota:</b> A função de correio PHP não está disponível. %s Se permanecer indisponível, você pode instalar o <a href="https://www.dokuwiki.org/plugin:smtp">plugin SMTP</a>.';
 $lang['i_phpver']              = 'A sua versão do PHP (<code>%s</code>) é inferior à necessária (<code>%s</code>). Você precisa atualizar a sua instalação do PHP.';
-$lang['i_mbfuncoverload']      = 'mbstring.func_overload precisa ser desabilitado no php.ini para executar o DokuWiki';
 $lang['i_urandom']             = 'O DokuWiki não pode criar números criptograficamente seguros para cookies. Você pode verificar as configurações do open_basedir no php.ini para obter o acesso <code> / dev / urandom </code> adequado.';
 $lang['i_permfail']            = 'O DokuWiki não tem permissão de escrita em <code>%s</code>. Você precisa corrigir as configurações de permissão nesse diretório!';
 $lang['i_confexists']          = '<code>%s</code> já existe';

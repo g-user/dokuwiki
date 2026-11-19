@@ -36,7 +36,7 @@ class Logger
 
         // Should logging be disabled for this facility?
         $dontlog = explode(',', $conf['dontlog']);
-        $dontlog = array_map('trim', $dontlog);
+        $dontlog = array_map(trim(...), $dontlog);
         if (in_array($facility, $dontlog)) $this->isLogging = false;
     }
 
@@ -153,9 +153,8 @@ class Logger
         // only log when any data available
         if (count($data['loglines'])) {
             return $this->writeLogLines($data['loglines'], $data['logfile']);
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

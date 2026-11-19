@@ -5,7 +5,6 @@
 *.ico binary
 *.xcf binary
 
-.git export-ignore
 .gitattributes export-ignore
 .github export-ignore
 .github/** export-ignore
@@ -18,3 +17,5 @@ composer.lock export-ignore
 _test export-ignore
 _test/** export-ignore
 lib/plugins/testing export-ignore
+AI_POLICY.md export-ignore
+CONTRIBUTING.md export-ignore

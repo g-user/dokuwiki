@@ -111,7 +111,8 @@ class RevisionInfo
         if ($this->val('mode') == self::MODE_MEDIA) {
             // media file revision
             return media_printicon($id);
-        } elseif ($this->val('mode') == self::MODE_PAGE) {
+        }
+        if ($this->val('mode') == self::MODE_PAGE) {
             // page revision
             return '<img class="icon" src="' . DOKU_BASE . 'lib/images/fileicons/file.png" alt="' . $id . '" />';
         }
@@ -157,10 +158,10 @@ class RevisionInfo
         if ($this->val('user')) {
             $html = '<bdi>' . editorinfo($this->val('user')) . '</bdi>';
             if (auth_ismanager()) {
-                $html .= ' <bdo dir="ltr">(' . $this->val('ip') . ')</bdo>';
+                $html .= ' <bdo dir="ltr">(' . hsc($this->val('ip')) . ')</bdo>';
             }
         } else {
-            $html = '<bdo dir="ltr">' . $this->val('ip') . '</bdo>';
+            $html = '<bdo dir="ltr">' . hsc($this->val('ip')) . '</bdo>';
         }
         return '<span class="user">' . $html . '</span>';
     }
@@ -261,6 +262,11 @@ class RevisionInfo
     public function showIconCompareWithPrevious()
     {
         global $lang;
+
+        if (!actionOK('diff')) {
+            return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
+        }
+
         $id = $this->val('id');
 
         $href = '';
@@ -289,9 +295,8 @@ class RevisionInfo
                   . '<img src="' . DOKU_BASE . 'lib/images/diff.png" width="15" height="11"'
                   . ' title="' . $lang['diff'] . '" alt="' . $lang['diff'] . '" />'
                   . '</a>';
-        } else {
-            return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
         }
+        return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
     }
 
     /**
@@ -303,6 +308,11 @@ class RevisionInfo
     public function showIconCompareWithCurrent()
     {
         global $lang;
+
+        if (!actionOK('diff')) {
+            return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
+        }
+
         $id = $this->val('id');
         $rev = $this->isCurrent() ? '' : $this->val('date');
 
@@ -325,9 +335,8 @@ class RevisionInfo
                   . '<img src="' . DOKU_BASE . 'lib/images/diff.png" width="15" height="11"'
                   . ' title="' . $lang['diff'] . '" alt="' . $lang['diff'] . '" />'
                   . '</a>';
-        } else {
-            return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
         }
+        return '<img src="' . DOKU_BASE . 'lib/images/blank.gif" width="15" height="11" alt="" />';
     }
 
     /**

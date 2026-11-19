@@ -108,7 +108,7 @@ class WantedPagesCLI extends CLI
             return WantedPagesCLI::DIR_CONTINUE;
         }
         if (is_dir($basepath . '/' . $entry)) {
-            if (strpos($entry, '_') === 0) {
+            if (str_starts_with($entry, '_')) {
                 return WantedPagesCLI::DIR_CONTINUE;
             }
             return WantedPagesCLI::DIR_NS;
@@ -144,7 +144,8 @@ class WantedPagesCLI extends CLI
             $status = $this->dirFilter($entry, $dir);
             if ($status == WantedPagesCLI::DIR_CONTINUE) {
                 continue;
-            } elseif ($status == WantedPagesCLI::DIR_NS) {
+            }
+            if ($status == WantedPagesCLI::DIR_NS) {
                 $pages = array_merge($pages, $this->getPages($dir . '/' . $entry));
             } else {
                 $page = ['id' => pathID(substr($dir . '/' . $entry, $trunclen)), 'file' => $dir . '/' . $entry];

@@ -94,9 +94,8 @@ function _io_readWikiPage_action($data)
 {
     if (is_array($data) && is_array($data[0]) && count($data[0]) === 2) {
         return io_readFile(...$data[0]);
-    } else {
-        return ''; //callback error
     }
+    return ''; //callback error
 }
 
 /**
@@ -120,10 +119,8 @@ function io_readFile($file, $clean = true)
     if (file_exists($file)) {
         if (str_ends_with($file, '.gz')) {
             if (!DOKU_HAS_GZIP) return false;
-            $ret = gzfile($file);
-            if (is_array($ret)) {
-                $ret = implode('', $ret);
-            }
+            $ret = gzfile_get_contents($file);
+            if ($ret === false) return false;
         } elseif (str_ends_with($file, '.bz2')) {
             if (!DOKU_HAS_BZIP) return false;
             $ret = bzfile($file);
@@ -134,9 +131,60 @@ function io_readFile($file, $clean = true)
     if ($ret === null) return false;
     if ($ret !== false && $clean) {
         return cleanText($ret);
-    } else {
-        return $ret;
     }
+    return $ret;
+}
+
+/**
+ * Returns the content of a .gz compressed file as string
+ *
+ * This reads the file in chunks and decompresses using inflate_* functions
+ * rather than gzfile(). This is necessary because PHP's zlib stream wrapper
+ * has a bug (php/php-src#21376) in PHP 8.5.3+ where gzfile() fails to detect
+ * corrupt gzip data and returns garbage instead of an error.
+ *
+ * Handles concatenated gzip streams as created by gzopen() in append mode.
+ *
+ * @param string $file filename
+ * @return string|false content or false on error
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
+ */
+function gzfile_get_contents($file)
+{
+    $fh = @fopen($file, 'rb');
+    if ($fh === false) return false;
+
+    $ret = '';
+    $leftover = '';
+    while ($leftover !== '' || !feof($fh)) {
+        $ctx = inflate_init(ZLIB_ENCODING_GZIP);
+
+        // decompress one gzip stream
+        while (true) {
+            if ($leftover !== '') {
+                $chunk = $leftover;
+                $leftover = '';
+            } else {
+                $chunk = fread($fh, 8192);
+                if ($chunk === '' || $chunk === false) break;
+            }
+            $readBefore = inflate_get_read_len($ctx);
+            $decoded = @inflate_add($ctx, $chunk);
+            if ($decoded === false) {
+                fclose($fh);
+                return false;
+            }
+            $ret .= $decoded;
+            if (inflate_get_status($ctx) === ZLIB_STREAM_END) {
+                $consumed = inflate_get_read_len($ctx) - $readBefore;
+                $leftover = substr($chunk, $consumed);
+                break;
+            }
+        }
+    }
+    fclose($fh);
+    return $ret;
 }
 
 /**
@@ -235,9 +283,8 @@ function _io_writeWikiPage_action($data)
             @touch($data[0][0], $data[3]);
         }
         return $ok;
-    } else {
-        return false; //callback error
     }
+    return false; //callback error
 }
 
 /**
@@ -488,15 +535,19 @@ function io_createNamespace($id, $ns_type = 'pages')
     // verify ns_type
     $types = ['pages' => 'wikiFN', 'media' => 'mediaFN'];
     if (!isset($types[$ns_type])) {
-        trigger_error('Bad $ns_type parameter for io_createNamespace().');
-        return;
+        throw new RuntimeException('Bad $ns_type parameter for io_createNamespace().');
     }
+    // refuse to create excessively deep hierarchies #4613
+    if (substr_count($id, ':') >= 128) {
+        throw new RuntimeException('Refusing to create nested namespace hierarchy deeper than 128 levels');
+    }
+
     // make event list
     $missing = [];
     $ns_stack = explode(':', $id);
     $ns = $id;
     $tmp = dirname($file = call_user_func($types[$ns_type], $ns));
-    while (!@is_dir($tmp) && !(file_exists($tmp) && !is_dir($tmp))) {
+    while (!@is_dir($tmp) && (!file_exists($tmp) || is_dir($tmp))) {
         array_pop($ns_stack);
         $ns = implode(':', $ns_stack);
         if (strlen($ns) == 0) {
@@ -599,7 +650,9 @@ function io_rmdir($path, $removefiles = false)
         }
         // remove self
         return @rmdir($path);
-    } elseif ($removefiles) {
+    }
+
+    if ($removefiles) {
         return @unlink($path);
     }
     return false;
@@ -624,9 +677,8 @@ function io_mktmpdir()
 
     if (io_mkdir_p($tmpdir)) {
         return $tmpdir;
-    } else {
-        return false;
     }
+    return false;
 }
 
 /**

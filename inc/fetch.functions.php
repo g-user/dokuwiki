@@ -127,9 +127,8 @@ function rfc2231_encode($name, $value, $charset = 'utf-8', $lang = 'en')
     );
     if ($value != $internal) {
         return ' ' . $name . '*=' . $charset . "'" . $lang . "'" . $internal;
-    } else {
-        return ' ' . $name . '="' . $value . '"';
     }
+    return ' ' . $name . '="' . $value . '"';
 }
 
 /**
@@ -174,7 +173,7 @@ function checkFileStatus(&$media, &$file, $rev = '', $width = 0, $height = 0)
         }
 
         //check permissions (namespace only)
-        if (auth_quickaclcheck(getNS($media) . ':X') < AUTH_READ) {
+        if (auth_quickaclcheck(mediaAclPath($media)) < AUTH_READ) {
             return [403, 'Forbidden'];
         }
         $file = mediaFN($media, $rev);

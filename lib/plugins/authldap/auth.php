@@ -103,24 +103,21 @@ class auth_plugin_authldap extends AuthPlugin
             }
             $this->bound = 1;
             return true;
-        } else {
-            // See if we can find the user
-            $info = $this->fetchUserData($user, true);
-            if (empty($info['dn'])) {
-                return false;
-            } else {
-                $dn = $info['dn'];
-            }
-
-            // Try to bind with the dn provided
-            if (!@ldap_bind($this->con, $dn, $pass)) {
-                $this->debug("LDAP: bind with $dn failed", -1, __LINE__, __FILE__);
-                $this->debug('LDAP user bind: ' . hsc(ldap_error($this->con)), 0, __LINE__, __FILE__);
-                return false;
-            }
-            $this->bound = 1;
-            return true;
         }
+        // See if we can find the user
+        $info = $this->fetchUserData($user, true);
+        if (empty($info['dn'])) {
+            return false;
+        }
+        $dn = $info['dn'];
+        // Try to bind with the dn provided
+        if (!@ldap_bind($this->con, $dn, $pass)) {
+            $this->debug("LDAP: bind with $dn failed", -1, __LINE__, __FILE__);
+            $this->debug('LDAP user bind: ' . hsc(ldap_error($this->con)), 0, __LINE__, __FILE__);
+            return false;
+        }
+        $this->bound = 1;
+        return true;
     }
 
     /**
@@ -142,7 +139,7 @@ class auth_plugin_authldap extends AuthPlugin
      *
      * @param string $user
      * @param bool $requireGroups (optional) - ignored, groups are always supplied by this plugin
-     * @return  array containing user data or false
+     * @return  array|bool containing user data or false
      * @author  <evaldas.auryla@pheur.org>
      * @author  Stephane Chazelas <stephane.chazelas@emerson.com>
      * @author  Steffen Schoch <schoch@dsb.net>
@@ -153,6 +150,9 @@ class auth_plugin_authldap extends AuthPlugin
      */
     public function getUserData($user, $requireGroups = true)
     {
+        if (!is_string($user) && !is_int($user)) return false;
+        $user = (string) $user;
+        if ($user == '') return false;
         return $this->fetchUserData($user);
     }
 
@@ -241,7 +241,7 @@ class auth_plugin_authldap extends AuthPlugin
         // general user info
         $info['dn'] = $user_result['dn'];
         $info['gid'] = $user_result['gidnumber'][0] ?? null;
-        $info['mail'] = $user_result['mail'][0];
+        $info['mail'] = $user_result['mail'][0] ?? null;
         $info['name'] = $user_result['cn'][0];
         $info['grps'] = [];
 
@@ -663,7 +663,6 @@ class auth_plugin_authldap extends AuthPlugin
         $sizelimit = 0
     ) {
         if (is_null($attributes)) $attributes = [];
-
         if ($scope == 'base') {
             return @ldap_read(
                 $link_identifier,
@@ -673,7 +672,9 @@ class auth_plugin_authldap extends AuthPlugin
                 $attrsonly,
                 $sizelimit
             );
-        } elseif ($scope == 'one') {
+        }
+
+        if ($scope == 'one') {
             return @ldap_list(
                 $link_identifier,
                 $base_dn,
@@ -682,16 +683,15 @@ class auth_plugin_authldap extends AuthPlugin
                 $attrsonly,
                 $sizelimit
             );
-        } else {
-            return @ldap_search(
-                $link_identifier,
-                $base_dn,
-                $filter,
-                $attributes,
-                $attrsonly,
-                $sizelimit
-            );
         }
+        return @ldap_search(
+            $link_identifier,
+            $base_dn,
+            $filter,
+            $attributes,
+            $attrsonly,
+            $sizelimit
+        );
     }
 
     /**

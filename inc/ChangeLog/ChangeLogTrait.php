@@ -38,9 +38,8 @@ trait ChangeLogTrait
                 'extra' => $info[6], // extra data (varies by line type)
                 'sizechange' => ($info[7] != '') ? (int)$info[7] : null, // size difference in bytes
             ];
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -152,6 +151,11 @@ trait ChangeLogTrait
                     break;
                 }
                 $info = $this->parseLogLine($tmp);
+                if (!is_array($info)) {
+                    // skip unparsable lines, but still advance the search boundary
+                    $head = $finger;
+                    continue;
+                }
                 $finger_rev = $info['date'];
 
                 if ($finger_rev > $rev) {

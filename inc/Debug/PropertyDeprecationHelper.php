@@ -53,7 +53,7 @@ trait PropertyDeprecationHelper
         $property,
         $class = null
     ) {
-        $this->deprecatedPublicProperties[$property] = $class ?: get_class($this);
+        $this->deprecatedPublicProperties[$property] = $class ?: $this::class;
     }
 
     public function __get($name)
@@ -64,14 +64,13 @@ trait PropertyDeprecationHelper
             return $this->$name;
         }
 
-        $qualifiedName = get_class() . '::$' . $name;
+        $qualifiedName = self::class . '::$' . $name;
         if ($this->deprecationHelperGetPropertyOwner($name)) {
             // Someone tried to access a normal non-public property. Try to behave like PHP would.
             throw new \RuntimeException("Cannot access non-public property $qualifiedName");
-        } else {
-            // Non-existing property. Try to behave like PHP would.
-            trigger_error("Undefined property: $qualifiedName", E_USER_NOTICE);
         }
+        // Non-existing property. Try to behave like PHP would.
+        trigger_error("Undefined property: $qualifiedName", E_USER_NOTICE);
         return null;
     }
 
@@ -84,14 +83,13 @@ trait PropertyDeprecationHelper
             return;
         }
 
-        $qualifiedName = get_class() . '::$' . $name;
+        $qualifiedName = self::class . '::$' . $name;
         if ($this->deprecationHelperGetPropertyOwner($name)) {
             // Someone tried to access a normal non-public property. Try to behave like PHP would.
             throw new \RuntimeException("Cannot access non-public property $qualifiedName");
-        } else {
-            // Non-existing property. Try to behave like PHP would.
-            $this->$name = $value;
         }
+        // Non-existing property. Try to behave like PHP would.
+        $this->$name = $value;
     }
 
     /**
@@ -119,11 +117,11 @@ trait PropertyDeprecationHelper
         $obfuscatedPropTail = "\0$property";
         foreach ($obfuscatedProps as $obfuscatedProp) {
             // private props are in the form \0<classname>\0<propname>
-            if (strpos($obfuscatedProp, $obfuscatedPropTail, 1) !== false) {
+            if (str_contains(substr($obfuscatedProp, 1), $obfuscatedPropTail)) {
                 $classname = substr($obfuscatedProp, 1, -strlen($obfuscatedPropTail));
                 if ($classname === '*') {
                     // sanity; this shouldn't be possible as protected properties were handled earlier
-                    $classname = self::class;
+                    return self::class;
                 }
                 return $classname;
             }

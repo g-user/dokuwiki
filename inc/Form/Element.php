@@ -63,11 +63,7 @@ abstract class Element
         }
 
         // get
-        if (isset($this->attributes[$name])) {
-            return $this->attributes[$name];
-        } else {
-            return '';
-        }
+        return $this->attributes[$name] ?? '';
     }
 
     /**
@@ -131,7 +127,7 @@ abstract class Element
      */
     public function id($id = null)
     {
-        if (strpos($id, '__') === false) {
+        if (!str_contains($id, '__')) {
             throw new \InvalidArgumentException('IDs in DokuWiki have to contain two subsequent underscores');
         }
 

@@ -3,6 +3,7 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Asta <astadue@gmail.com>
  * @author Jacob Palm <jacobpalmdk@icloud.com>
  * @author Kenneth Schack Banner <kescba@gmail.com>
  * @author Jon Theil Nielsen <jontheil@gmail.com>
@@ -126,6 +127,13 @@ $lang['js']['media_done_btn']  = 'Færdig';
 $lang['js']['media_drop']      = 'Træk filer hertil for at overføre';
 $lang['js']['media_cancel']    = 'fjern';
 $lang['js']['media_overwrt']   = 'Overskriv eksisterende filer';
+$lang['js']['data_insecure']   = 'ADVARSEL: Det virker til at din data-mappe (data directory) ikke er ordentligt sikret. Læs venligst omkring <ahref="https://www.dokuwiki.org/security#web_access_security">Web Access Security in DokuWiki</a>.';
+$lang['js']['size_larger']     = 'Forstør inputfelt';
+$lang['js']['size_smaller']    = 'Formindsk inputfelt';
+$lang['js']['size_wrap']       = 'Slå linjeombrydning til/fra';
+$lang['js']['clipboard_button'] = 'Kopier';
+$lang['js']['clipboard_success'] = 'Kopieret!';
+$lang['js']['clipboard_error'] = 'Kopiering fejlede';
 $lang['search_exact_match']    = 'Præcist match';
 $lang['search_starts_with']    = 'Starter med';
 $lang['search_ends_with']      = 'Slutter med';
@@ -158,6 +166,7 @@ $lang['profdeleted']           = 'Din brugerkonto er blevet slettet fra denne wi
 $lang['profconfdelete']        = 'Jeg ønsker at slette min brugerkonto fra denne wiki. <br/> Denne handling kan ikke fortrydes.';
 $lang['profconfdeletemissing'] = 'Afkrydsningsfelt til bekræftelse er ikke markeret';
 $lang['proffail']              = 'Brugerprofilen blev ikke opdateret.';
+$lang['proftokengenerate']     = 'Nulstil Token';
 $lang['pwdforget']             = 'Har du glemt din adgangskode? Få en ny';
 $lang['resendna']              = 'Denne wiki understøtter ikke udsendelse af ny adgangskode.';
 $lang['resendpwd']             = 'Vælg en ny adgangskode for';
@@ -227,6 +236,7 @@ $lang['created']               = 'oprettet';
 $lang['restored']              = 'gammel revision gendannet (%s)';
 $lang['external_edit']         = 'ekstern redigering';
 $lang['summary']               = 'Resumé af ændrigner';
+$lang['unknowndate']           = 'Ukendt dato';
 $lang['noflash']               = 'Du skal installere <a href="http://get.adobe.com/flashplayer">Adobe Flash Player</a> for at kunne se dette indhold.';
 $lang['download']              = 'Hent kodestykke';
 $lang['tools']                 = 'Værktøjer';
@@ -314,7 +324,6 @@ $lang['i_funcna']              = 'PHP funtionen <code>%s</code> er ikke tilgæng
 $lang['i_disabled']            = 'Det er blevet slået fra af din udbyder.';
 $lang['i_funcnmail']           = '<b>Bemærk:</b> PHP mail funktionen er ikke tilgængelig. %s Hvis den forbliver utilgængelig, kan du installere <a href="https://www.dokuwiki.org/plugin:smtp">SMTP udvidelsen</a>.';
 $lang['i_phpver']              = 'Din PHP version <code>%s</code> er mindre en den nødvendige <code>%s</code>. Du er nød til at opgradere din PHP installation.';
-$lang['i_mbfuncoverload']      = 'mbstring.func_overload skal være deaktiveret i php.ini for at køre DokuWiki.';
 $lang['i_urandom']             = 'DokuWiki kan ikke oprette kryptografisk sikre numre til cookies. Du bør måske kontrollere dine open_basedir indstillinger i php.ini for korrekt <code>/dev/urandom</code> adgang.';
 $lang['i_permfail']            = 'DokuWiki kan ikke skrive til <code>%s</code>. Du er nød til at rette tilladelses indstillingerne for denne mappe!';
 $lang['i_confexists']          = '<code>%s</code> eksisterer allerede';
@@ -375,3 +384,4 @@ $lang['page_nonexist_rev']     = 'Siden blev ikke fundet ved %s. Den blev efterf
 $lang['unable_to_parse_date']  = 'Kan ikke fortolke parameteren "%s".';
 $lang['email_signature_text']  = 'Denne e-mail blev genereret af DokuWiki på
 @DOKUWIKIURL@';
+$lang['log_file_failed_to_open'] = 'Kunne ikke åbne log filen.';

@@ -186,10 +186,9 @@ class PassHash
 
         if (defined('CRYPT_MD5') && CRYPT_MD5 && $salt !== '') {
             return crypt($clear, '$1$' . $salt . '$');
-        } else {
-            // Fall back to PHP-only implementation
-            return $this->hash_apr1($clear, $salt, '1');
         }
+        // Fall back to PHP-only implementation
+        return $this->hash_apr1($clear, $salt, '1');
     }
 
     /**
@@ -334,7 +333,7 @@ class PassHash
         $add     = 7;
         $charArr = preg_split("//", $clear);
         foreach ($charArr as $char) {
-            if (($char == '') || ($char == ' ') || ($char == '\t')) continue;
+            if (in_array($char, ['', ' ', '\t'], true)) continue;
             $charVal = ord($char);
             $nr ^= ((($nr & 63) + $add) * $charVal) + ($nr << 8);
             $nr2 += ($nr2 << 8) ^ $nr;
@@ -669,14 +668,18 @@ class PassHash
      *
      * @param string $clear   The clear text to hash
      * @param string $salt    The salt to use, null for random
-     * @param int    $compute The iteration count (between 4 and 31)
+     * @param int    $compute The iteration count (between 4 and 31 otherwise default is used)
      * @throws \Exception
      * @return string Hashed password
      */
-    public function hash_bcrypt($clear, $salt = null, $compute = 10)
+    public function hash_bcrypt($clear, $salt = null, $compute = 0)
     {
         if (!defined('CRYPT_BLOWFISH') || CRYPT_BLOWFISH !== 1) {
             throw new \Exception('This PHP installation has no bcrypt support');
+        }
+
+        if ($compute < 4 || $compute > 31) {
+            $compute = PASSWORD_BCRYPT_DEFAULT_COST;
         }
 
         if (is_null($salt)) {
@@ -740,9 +743,8 @@ class PassHash
         $this->init_salt($salt, 8, false);
         if (empty($rounds)) {
             return crypt($clear, '$' . $prefix . '$' . $salt . '$');
-        } else {
-            return crypt($clear, '$' . $prefix . '$' . $rounds . '$' . $salt . '$');
         }
+        return crypt($clear, '$' . $prefix . '$' . $rounds . '$' . $salt . '$');
     }
 
     /** @see sha2 */

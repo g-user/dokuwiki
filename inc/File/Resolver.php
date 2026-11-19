@@ -65,8 +65,8 @@ abstract class Resolver
         }
 
         // auto-relative, because there is a context namespace but no namespace in the ID
-        if ($this->contextID !== '' && strpos($id, ':') === false) {
-            $id = $this->contextNS . ':' . $id;
+        if ($this->contextID !== '' && !str_contains($id, ':')) {
+            return $this->contextNS . ':' . $id;
         }
 
         return $id;

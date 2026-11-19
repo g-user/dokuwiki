@@ -39,6 +39,9 @@ class PageTreeBuilder extends AbstractBuilder
     /** @var int The given namespace should be added as top element */
     public const FLAG_SELF_TOP = 16;
 
+    /** @var int Do not filter out pages/namespaces with invalid IDs */
+    public const FLAG_KEEP_INVALID = 32;
+
     /** @var string The top level namespace to iterate over */
     protected string $namespace;
 
@@ -124,10 +127,15 @@ class PageTreeBuilder extends AbstractBuilder
         global $conf;
         $base = $conf['datadir'] . '/';
 
-        $dirs = glob($base . $dir . '/*', GLOB_ONLYDIR);
+        $dirs = glob($base . $dir . '/*', GLOB_ONLYDIR); // will always ignore hidden dirs
         foreach ($dirs as $subdir) {
             $subdir = basename($subdir);
             $id = pathID($dir . '/' . $subdir);
+
+            // Skip namespaces with invalid IDs (_private)
+            if ($this->hasNotFlag(self::FLAG_KEEP_INVALID) && cleanID($id) !== $id) {
+                continue;
+            }
 
             $node = $this->createNamespaceNode($id, $subdir);
 
@@ -154,11 +162,9 @@ class PageTreeBuilder extends AbstractBuilder
             $ns = $id;
             $id = $this->getStartpage($id); // use the start page for the namespace
             $this->startpages[$id] = 1; // mark as seen
-            $node = new WikiStartpage($id, $title, $ns);
-        } else {
-            $node = new WikiNamespace($id, $title);
+            return new WikiStartpage($id, $title, $ns);
         }
-        return $node;
+        return new WikiNamespace($id, $title);
     }
 
     /**
@@ -180,6 +186,11 @@ class PageTreeBuilder extends AbstractBuilder
 
             // Skip already shown start pages
             if (isset($this->startpages[$id])) {
+                continue;
+            }
+
+            // Skip pages with invalid IDs (e.g., __template.txt)
+            if ($this->hasNotFlag(self::FLAG_KEEP_INVALID) && cleanID($id) !== $id) {
                 continue;
             }
 
@@ -232,7 +243,7 @@ class PageTreeBuilder extends AbstractBuilder
         $dir = wikiFN($namespace . ':xxx');
         $dir = substr($dir, strlen($base));
         $dir = dirname($dir); // remove the 'xxx' part
-        if ($dir === '.') $dir = ''; // dirname returns '.' for root namespace
+        if ($dir === '.') return ''; // dirname returns '.' for root namespace
         return $dir;
     }
 

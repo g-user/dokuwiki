@@ -61,4 +61,38 @@ class userdata_test extends DokuWikiTest
         $actual = $this->auth->retrieveGroups(10,3);
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * A single user name returns its data
+     */
+    public function test_getUserData_string()
+    {
+        $data = $this->auth->getUserData('user_1');
+        $this->assertIsArray($data);
+        $this->assertEquals('admin@example.com', $data['mail']);
+    }
+
+    /**
+     * Passing a non-string (e.g. the array of user names from a 'delete'
+     * AUTH_USER_CHANGE event) must fail safely instead of crashing with an
+     * "Array to string conversion" warning. See #4567.
+     */
+    public function test_getUserData_array()
+    {
+        $this->assertFalse($this->auth->getUserData(['user_1', 'user_2']));
+    }
+
+    /**
+     * PHP coerces a numeric user name to an integer array key. Passing such a
+     * name back as an integer must resolve to the same record as its string
+     * form instead of being rejected as a non-string.
+     */
+    public function test_getUserData_integer()
+    {
+        $expected = $this->auth->getUserData('1000');
+        $this->assertIsArray($expected);
+        $this->assertEquals('numeric@example.com', $expected['mail']);
+
+        $this->assertSame($expected, $this->auth->getUserData(1000));
+    }
 }
