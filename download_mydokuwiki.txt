@@ -24,22 +24,12 @@ rm master.zip
 mv dwedit-master dwedit
 
 
-entweder:
 
-wget https://github.com/g-user/ckgedit/archive/master.zip
+
+wget  https://github.com/g-user/dokuwiki-plugin-prosemirror/archive/refs/heads/master.zip
 unzip master.zip
 rm master.zip
-mv ckgedit-master ckgedit
-
-
-oder 
-
-wget https://github.com/g-user/ckgedit/archive/uploadimage.zip
-unzip uploadimage.zip
-rm uploadimage.zip
-mv ckgedit-uploadimage ckgedit
-
-
+mv dokuwiki-plugin-prosemirror-master prosemirror
 
 
 wget https://github.com/g-user/docsearch/archive/master.zip
