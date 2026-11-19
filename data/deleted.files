@@ -2,6 +2,16 @@
 # but were removed later. An up to date DokuWiki should not have any of
 # the files installed
 
+# removed on 2026-11-19
+_cs/DokuWiki/Sniffs/Functions/OpeningFunctionBraceSniff.php
+_cs/DokuWiki/Sniffs/NamingConventions/ConstructorNameSniff.php
+_cs/DokuWiki/Sniffs/PHP/DeprecatedFunctionsSniff.php
+_cs/DokuWiki/Sniffs/PHP/DiscouragedFunctionsSniff.php
+_cs/DokuWiki/Sniffs/WhiteSpace/ScopeIndentSniff.php
+_cs/DokuWiki/ruleset.xml
+_cs/README
+inc/FeedParser.php
+
 # removed on 2026-09-29
 lib/tpl/dokuwiki/images/dokuwiki.svg
 
